@@ -1,0 +1,9 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Trọ Nhanh API",
+    "version": "0.0.0"
+  },
+  "paths": {},
+  "components": { "schemas": {} }
+}

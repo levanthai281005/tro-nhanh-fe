@@ -1,0 +1,9 @@
+node_modules
+.pnpm-store
+.next
+dist
+.turbo
+.expo
+**/expo-env.d.ts
+**/next-env.d.ts
+pnpm-lock.yaml
