@@ -176,7 +176,8 @@ Không sửa trực tiếp `packages/types/src/api.ts`; file này sẽ bị ghi 
 - Internal dependency phải dùng `workspace:*`.
 - Giữ code có trạng thái hoặc SDK integration trong `lib`; giữ hàm thuần trong `utils`.
 
-Đọc đầy đủ [.agents/AGENTS.md](./.agents/AGENTS.md),
+Đọc đầy đủ [SOURCE_CODE_GUIDELINES.md](./SOURCE_CODE_GUIDELINES.md),
+[.agents/AGENTS.md](./.agents/AGENTS.md),
 [CODING_STANDARDS](./.agents/rules/CODING_STANDARDS.md),
 [NAMING_CONVENTIONS](./.agents/rules/NAMING_CONVENTIONS.md) và [HELP.md](./HELP.md)
 trước khi triển khai feature.

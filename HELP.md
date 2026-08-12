@@ -1,6 +1,7 @@
 # Getting Started
 
-Đọc [README](./README.md) để cài đặt, chạy dự án và hiểu cấu trúc workspace. Trước khi viết
+Đọc [README](./README.md) để cài đặt và chạy dự án, sau đó đọc
+[source code guidelines](./SOURCE_CODE_GUIDELINES.md) để hiểu cấu trúc workspace. Trước khi viết
 mã, đọc thêm [workspace guidelines](./.agents/AGENTS.md),
 [coding standards](./.agents/rules/CODING_STANDARDS.md) và
 [naming conventions](./.agents/rules/NAMING_CONVENTIONS.md).
