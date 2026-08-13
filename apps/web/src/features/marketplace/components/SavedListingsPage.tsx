@@ -2,6 +2,7 @@ export interface SavedListingsPageProps {
   renterId: string;
 }
 
-export function SavedListingsPage(_props: SavedListingsPageProps) {
+export function SavedListingsPage(props: SavedListingsPageProps) {
+  void props;
   return null;
 }

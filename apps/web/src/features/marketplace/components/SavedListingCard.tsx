@@ -3,6 +3,7 @@ export interface SavedListingCardProps {
   renterId: string;
 }
 
-export function SavedListingCard(_props: SavedListingCardProps) {
+export function SavedListingCard(props: SavedListingCardProps) {
+  void props;
   return null;
 }

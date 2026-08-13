@@ -6,6 +6,7 @@ export interface SaveListingButtonProps {
   'data-testid'?: string;
 }
 
-export function SaveListingButton(_props: SaveListingButtonProps) {
+export function SaveListingButton(props: SaveListingButtonProps) {
+  void props;
   return null;
 }
