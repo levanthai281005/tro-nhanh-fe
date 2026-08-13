@@ -24,16 +24,19 @@ const ROOM_META: Record<RoomStatus, BadgeMeta> = {
   Available: { label: 'Trống', className: 'bg-status-available text-surface' },
   Deposited: { label: 'Đã cọc', className: 'bg-status-deposited text-surface' },
   Rented: { label: 'Đang thuê', className: 'bg-status-rented text-surface' },
-  Hidden: { label: 'Đã ẩn', className: 'bg-status-rented text-surface' },
+  Hidden: { label: 'Đã ẩn', className: 'bg-ink-muted text-surface' },
 };
 
 const LISTING_META: Record<ListingStatus, BadgeMeta> = {
   Draft: { label: 'Bản nháp', className: 'bg-status-rented-soft text-ink-muted' },
   PendingApproval: { label: 'Chờ duyệt', className: 'bg-warning-soft text-warning' },
-  Active: { label: 'Đang hiển thị', className: 'bg-status-available-soft text-success' },
+  Active: {
+    label: 'Đang hiển thị',
+    className: 'bg-status-available-soft text-status-available',
+  },
   Rejected: { label: 'Bị từ chối', className: 'bg-error-soft text-error' },
   Expired: { label: 'Hết hạn', className: 'bg-status-rented-soft text-ink-muted' },
-  Rented: { label: 'Đã cho thuê', className: 'bg-primary-soft text-primary' },
+  Rented: { label: 'Đã cho thuê', className: 'bg-status-rented-soft text-status-rented' },
   Hidden: { label: 'Đã ẩn', className: 'bg-status-rented-soft text-ink-muted' },
 };
 

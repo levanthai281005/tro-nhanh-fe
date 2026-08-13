@@ -7,6 +7,8 @@ import { cn } from '@/utils/cn';
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
+// TODO: BR-015 — `requiresWrite`/`useCanWrite` tạm bỏ vì rebuild chưa có Workspace gating
+// context cung cấp `workspaceStatus`; nối lại khi capability này có nguồn dữ liệu đáng tin cậy.
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
