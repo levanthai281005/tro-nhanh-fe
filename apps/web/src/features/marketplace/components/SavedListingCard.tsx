@@ -4,14 +4,27 @@ import { MapPin, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type { KeyboardEvent } from 'react';
+import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { SaveListingButton } from '@/features/marketplace/components/SaveListingButton';
-import type { SavedListingCardView } from '@/features/marketplace/types/savedListings';
+import type {
+  RentalListingStatus,
+  SavedListingCardView,
+} from '@/features/marketplace/types/savedListings';
 
 export interface SavedListingCardProps {
   listing: SavedListingCardView;
   renterId: string;
 }
+
+const LISTING_STATUS_WARNING: Partial<Record<RentalListingStatus, string>> = {
+  Draft: 'Tin này hiện là bản nháp.',
+  PendingApproval: 'Tin này đang chờ kiểm duyệt.',
+  Rejected: 'Tin này đã bị từ chối.',
+  Expired: 'Tin này đã hết hạn.',
+  Rented: 'Tin này đã cho thuê.',
+  Hidden: 'Tin này đã được người đăng ẩn.',
+};
 
 function formatListingPrice(price: number) {
   if (price >= 1_000_000) {
@@ -23,6 +36,7 @@ function formatListingPrice(price: number) {
 export function SavedListingCard({ listing, renterId }: SavedListingCardProps) {
   const router = useRouter();
   const detailHref = `/phong/${listing.id}`;
+  const statusWarning = LISTING_STATUS_WARNING[listing.status];
   const openListing = () => router.push(detailHref);
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') openListing();
@@ -65,6 +79,12 @@ export function SavedListingCard({ listing, renterId }: SavedListingCardProps) {
           {formatListingPrice(listing.price)}
           <span className="text-xs font-normal text-ink-muted">/tháng</span>
         </span>
+        {statusWarning ? (
+          <div className="mt-1 flex items-center gap-2 border-t border-line pt-2.5">
+            <Badge className="shrink-0" kind="listing" status={listing.status} />
+            <p className="m-0 text-xs leading-[1.4] text-ink-muted">{statusWarning}</p>
+          </div>
+        ) : null}
       </div>
     </Card>
   );

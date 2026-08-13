@@ -1,4 +1,5 @@
 import type {
+  RentalListingStatus,
   RentalPropertyType,
   SavedListingRecord,
 } from '@/features/marketplace/types/savedListings';
@@ -12,6 +13,7 @@ interface MockListingSeed {
   sellerId: string;
   title: string;
   propertyType: RentalPropertyType;
+  status: RentalListingStatus;
   address: string;
   district: string;
   area: number;
@@ -27,6 +29,7 @@ const MOCK_LISTING_SEEDS: readonly MockListingSeed[] = [
     sellerId: '40000000-0000-4000-8000-000000000001',
     title: 'Phòng trọ cao cấp, full nội thất, gần ĐH Bách Khoa',
     propertyType: 'BoardingRoom',
+    status: 'Active',
     address: '268 Lý Thường Kiệt, Phường 14',
     district: 'Quận 10',
     area: 25,
@@ -40,6 +43,7 @@ const MOCK_LISTING_SEEDS: readonly MockListingSeed[] = [
     sellerId: '40000000-0000-4000-8000-000000000002',
     title: 'Căn hộ dịch vụ ban công đẹp, thang máy, 1PN',
     propertyType: 'ServicedApartment',
+    status: 'Rented',
     address: '42 Nguyễn Gia Trí, Phường 25',
     district: 'Bình Thạnh',
     area: 38,
@@ -53,6 +57,7 @@ const MOCK_LISTING_SEEDS: readonly MockListingSeed[] = [
     sellerId: '40000000-0000-4000-8000-000000000003',
     title: 'Phòng gác lửng thoáng mát, WC riêng, giờ tự do',
     propertyType: 'BoardingRoom',
+    status: 'Expired',
     address: '15 Hà Huy Giáp, Phường Thạnh Lộc',
     district: 'Quận 12',
     area: 22,
@@ -66,6 +71,7 @@ const MOCK_LISTING_SEEDS: readonly MockListingSeed[] = [
     sellerId: '40000000-0000-4000-8000-000000000004',
     title: 'Studio yên tĩnh, cửa sổ lớn, gần trung tâm',
     propertyType: 'ServicedApartment',
+    status: 'Hidden',
     address: '81 Trần Quang Diệu, Phường 13',
     district: 'Quận 3',
     area: 30,
@@ -79,6 +85,7 @@ const MOCK_LISTING_SEEDS: readonly MockListingSeed[] = [
     sellerId: '40000000-0000-4000-8000-000000000005',
     title: 'Căn hộ 2PN đầy đủ tiện nghi, khu dân cư an ninh',
     propertyType: 'Apartment',
+    status: 'Active',
     address: '120 Nguyễn Hữu Thọ, Phường Tân Hưng',
     district: 'Quận 7',
     area: 58,
@@ -92,6 +99,7 @@ const MOCK_LISTING_SEEDS: readonly MockListingSeed[] = [
     sellerId: '40000000-0000-4000-8000-000000000006',
     title: 'Phòng trọ mới xây, có gác, gần khu công nghệ cao',
     propertyType: 'BoardingRoom',
+    status: 'Active',
     address: '36 Lê Văn Việt, Phường Hiệp Phú',
     district: 'Thủ Đức',
     area: 24,
@@ -137,10 +145,11 @@ export const MOCK_SAVED_LISTING_RECORDS: readonly SavedListingRecord[] = MOCK_LI
         accessOpenTime: null,
         accessCloseTime: null,
         contactPhone: '0901234567',
-        status: 'Active',
+        status: seed.status,
         rejectReason: null,
         approvedAt: '2026-07-01T08:00:00.000Z',
-        expireAt: '2026-08-30T08:00:00.000Z',
+        expireAt:
+          seed.status === 'Expired' ? '2026-08-01T08:00:00.000Z' : '2026-08-30T08:00:00.000Z',
         boostExpireAt: index === 0 ? '2026-08-20T08:00:00.000Z' : null,
         createdAt: listingCreatedAt,
         updatedAt: listingCreatedAt,
