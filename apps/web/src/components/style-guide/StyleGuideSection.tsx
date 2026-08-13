@@ -7,6 +7,14 @@ export interface StyleGuideSectionProps {
 }
 
 export function StyleGuideSection(props: StyleGuideSectionProps) {
-  void props;
-  return null;
+  const { id, title, children } = props;
+
+  return (
+    <section id={id} className="mb-12 scroll-mt-6">
+      <h2 className="mb-6 border-b-2 border-line pb-2 text-[22px] font-bold tracking-[-0.01em] text-ink">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
 }
