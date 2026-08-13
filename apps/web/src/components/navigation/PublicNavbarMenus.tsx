@@ -23,18 +23,18 @@ export function PostMenu(props: PostMenuProps) {
         Chọn loại tin đăng
       </p>
       <MenuCard
+        description="Dành cho chủ trọ muốn đăng phòng cho thuê."
+        href="/chu-tro/dang-tin"
+        Icon={KeyRound}
+        onClose={onClose}
+        title="Đăng tin cho thuê"
+      />
+      <MenuCard
         description="Dành cho người thuê muốn đăng nhu cầu tìm phòng."
         href="/tai-khoan/dang-tin-nhu-cau"
         Icon={UserSearch}
         onClose={onClose}
         title="Đăng tin tìm phòng"
-      />
-      <MenuCard
-        description="Dành cho chủ trọ muốn đăng phòng cho thuê."
-        href="/dang-tin-cho-thue"
-        Icon={KeyRound}
-        onClose={onClose}
-        title="Đăng tin cho thuê"
       />
     </div>
   );
