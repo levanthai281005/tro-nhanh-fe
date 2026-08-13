@@ -1,5 +1,8 @@
 'use client';
 
+import { PublicNavbarDesktop } from '@/components/navigation/PublicNavbarDesktop';
+import { PublicNavbarMobile } from '@/components/navigation/PublicNavbarMobile';
+
 export interface NavbarViewer {
   displayName: string;
   roles?: Array<'Renter' | 'Seller' | 'Admin' | 'Moderator'>;
@@ -14,6 +17,14 @@ export interface PublicNavbarProps {
 }
 
 export function PublicNavbar(props: PublicNavbarProps) {
-  void props;
-  return null;
+  return (
+    <>
+      <div className="hidden md:block">
+        <PublicNavbarDesktop {...props} />
+      </div>
+      <div className="md:hidden">
+        <PublicNavbarMobile {...props} />
+      </div>
+    </>
+  );
 }
