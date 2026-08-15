@@ -1,22 +1,7 @@
 # Workspace Guidelines for Agents
 
 Trước khi thay đổi mã nguồn, hãy đọc `README.md`, `HELP.md` và toàn bộ tài liệu trong
-`.agents/rules/`.
-
-## Bản đồ tài liệu
-
-| Thư mục | Nội dung | Đọc khi nào |
-|---|---|---|
-| `.agents/rules/` | Quy ước viết code và đặt tên | Luôn luôn, trước khi viết code |
-| `.agents/business/` | Nghiệp vụ: thuật ngữ, luật, màn hình, API, enum | Khi cần biết hệ thống *phải làm gì* |
-| `.agents/tasks/` | Quy trình cho từng loại công việc | Khi bắt đầu một loại việc lặp lại |
-| `.agents/skills/` | Kỹ năng chuyên biệt kèm bảng tra | Khi thao tác cần tra cứu chi tiết |
-
-Mỗi thư mục có `README.md` làm mục lục. **Đọc đúng file cần thay vì đọc tất cả** — ngữ cảnh
-loãng làm chất lượng đầu ra tụt.
-
-Ba file nên đọc đầu tiên khi mới vào dự án: `business/GLOSSARY.md`,
-`business/PRODUCT_OVERVIEW.md` và `business/ARCHITECTURE_AND_SHELLS.md`.
+`.agents/rules/`. Tài liệu nghiệp vụ theo từng miền sẽ được đặt trong `.agents/business/`.
 
 ## Phạm vi workspace
 
@@ -33,11 +18,7 @@ Ba file nên đọc đầu tiên khi mới vào dự án: `business/GLOSSARY.md`
 - Không dùng explicit `any`; TypeScript phải giữ `strict: true`.
 - Dùng dependency nội bộ qua `workspace:*`.
 - Bảo toàn thay đổi hiện có của người dùng; không reset hoặc xóa ngoài phạm vi yêu cầu.
-- Trước khi bàn giao, chạy các quality gate phù hợp: lint, typecheck, build và format check;
-  đối chiếu `.agents/tasks/PRE_HANDOFF_CHECKLIST.md`.
-- Nghiệp vụ tuân theo mã `BR-xxx` và `AS-xxx` trong `.agents/business/`; giá trị enum lấy đúng
-  từ `business/STATUS_ENUMS.md`, không tự dịch hay tự thêm.
-- Khi yêu cầu được giao mâu thuẫn với tài liệu nghiệp vụ, **dừng lại và hỏi**, không tự quyết.
+- Trước khi bàn giao, chạy các quality gate phù hợp: lint, typecheck, build và format check.
 
 ## Quy ước riêng cho web
 
