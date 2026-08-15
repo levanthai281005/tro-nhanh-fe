@@ -16,8 +16,8 @@ export function PublicNavbarMobile({ viewer, onSignOut }: PublicNavbarProps) {
     { label: 'Tin nhu cầu', href: '/tin-tim-phong' },
     ...(viewer ? [{ label: 'Tin đăng của tôi', href: '/tai-khoan/tin-cho-thue' }] : []),
     ...(viewer ? [{ label: 'Tin đã lưu', href: '/tai-khoan/da-luu' }] : []),
+    { label: 'Đăng tin cho thuê', href: '/chu-tro/dang-tin', isSubItem: true },
     { label: 'Đăng tin tìm phòng', href: '/tai-khoan/dang-tin-nhu-cau', isSubItem: true },
-    { label: 'Đăng tin cho thuê', href: '/dang-tin-cho-thue', isSubItem: true },
     ...(viewer ? [{ label: 'Tin nhắn', href: '/tin-nhan' }] : []),
     ...(isStaff ? [{ label: 'Quản trị hệ thống', href: '/admin' }] : []),
   ];
