@@ -36,7 +36,7 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="mx-auto hidden max-w-[1200px] grid-cols-[1.25fr_1fr] items-center gap-[54px] px-8 py-[72px] md:grid lg:py-20">
+      <div className="mx-auto hidden max-w-[1264px] grid-cols-[1.25fr_1fr] items-center gap-[54px] px-8 py-[72px] md:grid lg:py-20">
         <div className="text-left">
           <TaglineBadge />
           <HeroHeading className="text-4xl lg:text-[44px]" />
