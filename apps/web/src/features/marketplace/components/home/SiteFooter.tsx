@@ -4,7 +4,10 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 
 const DISCOVERY_LINKS = [
   { label: 'Tìm phòng trọ', href: '/tim-phong' },
-  { label: 'Căn hộ dịch vụ', href: '/tim-phong?type=C%C4%83n%20h%E1%BB%99%20d%E1%BB%8Bch%20v%E1%BB%A5' },
+  {
+    label: 'Căn hộ dịch vụ',
+    href: '/tim-phong?type=C%C4%83n%20h%E1%BB%99%20d%E1%BB%8Bch%20v%E1%BB%A5',
+  },
   { label: 'Nhà nguyên căn', href: '/tim-phong?type=Nh%C3%A0%20nguy%C3%AAn%20c%C4%83n' },
   { label: 'Văn phòng cho thuê', href: '/tim-phong' },
 ] as const;
@@ -32,8 +35,8 @@ export function SiteFooter() {
               <BrandLogo size="md" />
             </div>
             <p className="mb-5 max-w-[260px] text-[13px] leading-[1.75] text-ink-muted">
-              Nền tảng tìm kiếm và quản lý phòng trọ tại Việt Nam. Mang lại giải pháp an toàn
-              và hiệu quả cho sinh viên và người lao động.
+              Nền tảng tìm kiếm và quản lý phòng trọ tại Việt Nam. Mang lại giải pháp an toàn và
+              hiệu quả cho sinh viên và người lao động.
             </p>
             <div className="flex gap-2.5">
               {SOCIAL_LINKS.map(({ label, href, Icon }) => (
@@ -78,9 +81,7 @@ export function SiteFooter() {
             <ContactRow Icon={Phone} href="tel:1900123456">
               1900 123 456
             </ContactRow>
-            <ContactRow Icon={MapPin}>
-              Tầng 12, Tòa nhà Bitexco, Quận 1, TP. Hồ Chí Minh
-            </ContactRow>
+            <ContactRow Icon={MapPin}>Tầng 12, Tòa nhà Bitexco, Quận 1, TP. Hồ Chí Minh</ContactRow>
           </FooterColumn>
         </div>
 

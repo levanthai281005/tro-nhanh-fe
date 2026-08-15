@@ -9,8 +9,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'Trọ Nhanh — Tìm phòng và quản lý trọ dễ dàng',
-  description:
-    'Tìm phòng trọ, căn hộ và đăng nhu cầu thuê trực tiếp trên nền tảng Trọ Nhanh.',
+  description: 'Tìm phòng trọ, căn hộ và đăng nhu cầu thuê trực tiếp trên nền tảng Trọ Nhanh.',
 };
 
 export const revalidate = 60;

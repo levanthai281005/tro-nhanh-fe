@@ -88,10 +88,7 @@ export function PostingCTASection() {
       </div>
 
       {isPostTypeOpen ? (
-        <PostTypeModal
-          onClose={() => setIsPostTypeOpen(false)}
-          onSelect={selectPostType}
-        />
+        <PostTypeModal onClose={() => setIsPostTypeOpen(false)} onSelect={selectPostType} />
       ) : null}
     </section>
   );

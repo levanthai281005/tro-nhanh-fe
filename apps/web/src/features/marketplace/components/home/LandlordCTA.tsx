@@ -26,8 +26,8 @@ export function LandlordCTA() {
               Bạn có phòng cho thuê?
             </h2>
             <p className="max-w-[580px] text-[13.5px] leading-[1.6] text-surface/70 md:text-[14.5px]">
-              Tham gia cùng hàng ngàn chủ nhà khác để tiếp cận lượng khách hàng tiềm năng
-              thông qua nền tảng này.
+              Tham gia cùng hàng ngàn chủ nhà khác để tiếp cận lượng khách hàng tiềm năng thông qua
+              nền tảng này.
             </p>
           </div>
         </div>

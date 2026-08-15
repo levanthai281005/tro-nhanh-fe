@@ -43,8 +43,8 @@ export function MarketplaceSections() {
                 Nhu cầu khách thuê &amp; Ở ghép
               </h2>
               <p className="mt-1 text-[13px] leading-[1.5] text-ink-muted md:text-[15px]">
-                Tìm kiếm khách thuê đang tìm phòng hoặc các tin tìm người ở ghép cùng chia sẻ
-                chi phí.
+                Tìm kiếm khách thuê đang tìm phòng hoặc các tin tìm người ở ghép cùng chia sẻ chi
+                phí.
               </p>
             </div>
           </div>

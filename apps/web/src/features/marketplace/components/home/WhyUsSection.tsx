@@ -9,8 +9,7 @@ const FEATURES = [
   {
     Icon: ShieldCheck,
     title: 'Thông tin xác thực',
-    description:
-      '100% tin đăng được đội ngũ kiểm duyệt kỹ lưỡng, đảm bảo hình ảnh thật, giá thật.',
+    description: '100% tin đăng được đội ngũ kiểm duyệt kỹ lưỡng, đảm bảo hình ảnh thật, giá thật.',
   },
   {
     Icon: CreditCard,

@@ -119,7 +119,9 @@ function TaglineBadge() {
 
 function HeroHeading({ className }: { className: string }) {
   return (
-    <h1 className={`mb-4 font-black leading-[1.2] tracking-[-0.02em] text-ink md:mb-5 ${className}`}>
+    <h1
+      className={`mb-4 font-black leading-[1.2] tracking-[-0.02em] text-ink md:mb-5 ${className}`}
+    >
       Tìm không gian <span className="text-primary">sống lý tưởng</span>,
       <br />
       nhanh chóng &amp; an tâm
@@ -130,8 +132,8 @@ function HeroHeading({ className }: { className: string }) {
 function HeroDescription({ className }: { className: string }) {
   return (
     <p className={`leading-[1.7] text-ink-muted ${className}`}>
-      Nơi chủ nhà và người thuê gặp nhau trực tiếp. Xem giá, chi phí điện nước và liên hệ chủ
-      nhà ngay trên tin đăng — không qua trung gian.
+      Nơi chủ nhà và người thuê gặp nhau trực tiếp. Xem giá, chi phí điện nước và liên hệ chủ nhà
+      ngay trên tin đăng — không qua trung gian.
     </p>
   );
 }
