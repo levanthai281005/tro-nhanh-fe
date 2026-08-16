@@ -15,8 +15,8 @@ export interface StickyContactCardProps {
   viewerId?: string;
 }
 
-function formatVnd(value: number) {
-  return value > 0 ? `${value.toLocaleString('vi-VN')} đ` : 'Chưa cập nhật';
+function formatVnd(value: number, suffix = '') {
+  return value > 0 ? `${value.toLocaleString('vi-VN')} đ${suffix}` : 'Chưa cập nhật';
 }
 
 function getMaskedPhone(phone: string) {
@@ -58,7 +58,7 @@ export function StickyContactCard({ detail, viewerId }: StickyContactCardProps) 
             <p className="flex justify-between gap-3">
               <span>Điện</span>
               <span className="font-semibold text-surface">
-                {formatVnd(listing.electricityPrice)}/kWh
+                {formatVnd(listing.electricityPrice, '/kWh')}
               </span>
             </p>
             <p className="flex justify-between gap-3">

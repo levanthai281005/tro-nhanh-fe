@@ -12,6 +12,17 @@ export interface ImageGalleryProps {
   title: string;
 }
 
+function getImageGridClass(index: number, imageCount: number) {
+  if (imageCount === 1) return 'col-span-4 row-span-2';
+  if (imageCount === 2) return index === 0 ? 'col-span-3 row-span-2' : 'col-span-1 row-span-2';
+  if (imageCount === 3) return index === 0 ? 'col-span-2 row-span-2' : 'col-span-2';
+  if (imageCount === 4) {
+    if (index === 0) return 'col-span-2 row-span-2';
+    return index === 1 ? 'col-span-2' : 'col-span-1';
+  }
+  return index === 0 ? 'col-span-2 row-span-2' : '';
+}
+
 export function ImageGallery({ images, listingId, viewerId, title }: ImageGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const visibleImages = images.slice(0, 5);
@@ -30,15 +41,14 @@ export function ImageGallery({ images, listingId, viewerId, title }: ImageGaller
         <div className="grid h-[420px] grid-cols-4 grid-rows-2 gap-1.5 bg-line">
           {visibleImages.map((image, index) => {
             const isPrimary = index === 0;
+            const gridClass = getImageGridClass(index, visibleImages.length);
             const isLastVisible =
               index === visibleImages.length - 1 && images.length > visibleImages.length;
 
             return (
               <button
                 aria-label={`Mở ảnh ${index + 1} của ${title}`}
-                className={`group relative overflow-hidden bg-cream ${
-                  isPrimary ? 'col-span-2 row-span-2' : ''
-                }`}
+                className={`group relative overflow-hidden bg-cream ${gridClass}`}
                 key={image}
                 onClick={() => setLightboxIndex(index)}
                 type="button"
