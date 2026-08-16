@@ -14,6 +14,7 @@ import { ReviewsSection } from '@/features/marketplace/components/detail/Reviews
 import { SimilarRooms } from '@/features/marketplace/components/detail/SimilarRooms';
 import { StickyContactCard } from '@/features/marketplace/components/detail/StickyContactCard';
 import { TitleBlock } from '@/features/marketplace/components/detail/TitleBlock';
+import { SiteFooter } from '@/features/marketplace/components/SiteFooter';
 
 export interface RoomDetailPageProps {
   detail: ListingDetailData;
@@ -38,54 +39,57 @@ export function RoomDetailPage({ detail, similarListings, viewerId }: RoomDetail
   const images = media.map((item) => item.url).filter(Boolean);
 
   return (
-    <main data-listing-id={listing.id} data-testid="room-detail-page">
-      <div className="md:hidden">
-        <MobileImageCarousel
-          images={images}
-          listingId={listing.id}
-          title={listing.title}
-          viewerId={viewerId}
-        />
-        <div className="mx-auto w-full max-w-[720px] px-4 pb-24 pt-5">
-          <TitleBlock detail={detail} />
-          <MobileContactCard detail={detail} viewerId={viewerId} />
-          <DescriptionSection detail={detail} />
-          <QuickStats detail={detail} />
-          <AmenitiesGrid detail={detail} />
-          <MobileNearbySection detail={detail} />
-          <CostTable detail={detail} />
-          <ReviewsSection detail={detail} />
-          <SimilarRooms district={listing.district} listings={similarListings} />
-          <SafetyNotice />
-        </div>
-      </div>
-
-      <div className="hidden md:block">
-        <div className="mx-auto w-full max-w-[1200px] px-8 py-8 lg:pb-16">
-          <ImageGallery
+    <>
+      <main data-listing-id={listing.id} data-testid="room-detail-page">
+        <div className="md:hidden">
+          <MobileImageCarousel
             images={images}
             listingId={listing.id}
             title={listing.title}
             viewerId={viewerId}
           />
-          <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
-            <div className="min-w-0">
-              <TitleBlock detail={detail} />
-              <DescriptionSection detail={detail} />
-              <QuickStats detail={detail} />
-              <AmenitiesGrid detail={detail} />
-              <CostTable detail={detail} />
-              <NearbySection detail={detail} />
-              <ReviewsSection detail={detail} />
-              <SimilarRooms district={listing.district} listings={similarListings} />
-              <SafetyNotice />
-            </div>
-            <aside className="sticky top-24">
-              <StickyContactCard detail={detail} viewerId={viewerId} />
-            </aside>
+          <div className="mx-auto w-full max-w-[720px] px-4 pb-24 pt-5">
+            <TitleBlock detail={detail} />
+            <MobileContactCard detail={detail} viewerId={viewerId} />
+            <DescriptionSection detail={detail} />
+            <QuickStats detail={detail} />
+            <AmenitiesGrid detail={detail} />
+            <MobileNearbySection detail={detail} />
+            <CostTable detail={detail} />
+            <ReviewsSection detail={detail} />
+            <SimilarRooms district={listing.district} listings={similarListings} />
+            <SafetyNotice />
           </div>
         </div>
-      </div>
-    </main>
+
+        <div className="hidden md:block">
+          <div className="mx-auto w-full max-w-[1200px] px-8 py-8 lg:pb-16">
+            <ImageGallery
+              images={images}
+              listingId={listing.id}
+              title={listing.title}
+              viewerId={viewerId}
+            />
+            <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+              <div className="min-w-0">
+                <TitleBlock detail={detail} />
+                <DescriptionSection detail={detail} />
+                <QuickStats detail={detail} />
+                <AmenitiesGrid detail={detail} />
+                <CostTable detail={detail} />
+                <NearbySection detail={detail} />
+                <ReviewsSection detail={detail} />
+                <SimilarRooms district={listing.district} listings={similarListings} />
+                <SafetyNotice />
+              </div>
+              <aside className="sticky top-24">
+                <StickyContactCard detail={detail} viewerId={viewerId} />
+              </aside>
+            </div>
+          </div>
+        </div>
+      </main>
+      <SiteFooter />
+    </>
   );
 }
