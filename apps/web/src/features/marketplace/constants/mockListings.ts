@@ -1,5 +1,6 @@
 import type { ListingRecord, MarketplaceEntityFields } from '@/features/marketplace/types/listings';
 import type {
+  AccessPolicy,
   RentalListing,
   RentalListingStatus,
   RentalPropertyType,
@@ -41,7 +42,18 @@ interface ListingSeed {
   area: number;
   price: number;
   imageUrl: string;
+  imageUrls?: readonly string[];
   amenityIcons: readonly string[];
+  propertyId?: string | null;
+  description?: string;
+  electricityPrice?: number;
+  waterPrice?: number;
+  servicePrice?: number;
+  deposit?: number;
+  accessPolicy?: AccessPolicy;
+  accessOpenTime?: string | null;
+  accessCloseTime?: string | null;
+  contactPhone?: string;
   status?: RentalListingStatus;
   expireAt?: string;
   boostExpireAt?: string | null;
@@ -156,7 +168,25 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     area: 40,
     price: 8_100_000,
     imageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80',
+    imageUrls: [
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1600&q=85',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=85',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1600&q=85',
+      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1600&q=85',
+      'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=1600&q=85',
+    ],
     amenityIcons: ['wifi', 'ac', 'furniture'],
+    propertyId: '60000000-0000-4000-8000-000000000009',
+    description:
+      'Căn hộ dịch vụ yên tĩnh, đầy đủ nội thất và chỉ cách sân bay vài phút di chuyển. Phòng có cửa sổ lớn, bếp riêng, máy lạnh, máy nước nóng và khu vực để xe trong nhà. Phù hợp người đi làm hoặc sinh viên muốn ở lâu dài.',
+    electricityPrice: 3_800,
+    waterPrice: 120_000,
+    servicePrice: 200_000,
+    deposit: 8_100_000,
+    accessPolicy: 'Restricted',
+    accessOpenTime: '06:00',
+    accessCloseTime: '23:00',
+    contactPhone: '0938456789',
   },
   {
     id: '10000000-0000-4000-8000-000000000010',
@@ -216,22 +246,22 @@ export const MOCK_LISTING_RECORDS: readonly ListingRecord[] = LISTING_SEEDS.map(
     ...fields,
     sellerId: seed.sellerId,
     roomId: null,
-    propertyId: null,
+    propertyId: seed.propertyId ?? null,
     title: seed.title,
     propertyType: seed.propertyType,
     address: seed.address,
     district: seed.district,
     area: seed.area,
     price: seed.price,
-    description: 'Không gian sạch sẽ, thuận tiện đi lại và sẵn sàng vào ở.',
-    electricityPrice: 3_500,
-    waterPrice: 100_000,
-    servicePrice: 150_000,
-    deposit: seed.price,
-    accessPolicy: 'Free',
-    accessOpenTime: null,
-    accessCloseTime: null,
-    contactPhone: '0901234567',
+    description: seed.description ?? 'Không gian sạch sẽ, thuận tiện đi lại và sẵn sàng vào ở.',
+    electricityPrice: seed.electricityPrice ?? 3_500,
+    waterPrice: seed.waterPrice ?? 100_000,
+    servicePrice: seed.servicePrice ?? 150_000,
+    deposit: seed.deposit ?? seed.price,
+    accessPolicy: seed.accessPolicy ?? 'Free',
+    accessOpenTime: seed.accessOpenTime ?? null,
+    accessCloseTime: seed.accessCloseTime ?? null,
+    contactPhone: seed.contactPhone ?? '0901234567',
     status: seed.status ?? 'Active',
     rejectReason: null,
     approvedAt: BASE_DATE,
@@ -242,16 +272,17 @@ export const MOCK_LISTING_RECORDS: readonly ListingRecord[] = LISTING_SEEDS.map(
   return {
     listing,
     amenities: MOCK_AMENITIES.filter((amenity) => seed.amenityIcons.includes(amenity.icon)),
-    media: [
-      {
-        ...entityFields(`52000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`, 2),
-        ownerType: 'RentalListing',
-        ownerId: seed.id,
-        url: seed.imageUrl,
-        mimeType: 'image/jpeg',
-        sizeBytes: 240_000,
-        isPrivate: false,
-      },
-    ],
+    media: (seed.imageUrls ?? [seed.imageUrl]).map((url, mediaIndex) => ({
+      ...entityFields(
+        `52000000-0000-4000-8000-${String(index * 10 + mediaIndex + 1).padStart(12, '0')}`,
+        2,
+      ),
+      ownerType: 'RentalListing',
+      ownerId: seed.id,
+      url,
+      mimeType: 'image/jpeg',
+      sizeBytes: 240_000,
+      isPrivate: false,
+    })),
   };
 });

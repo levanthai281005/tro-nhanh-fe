@@ -1,9 +1,12 @@
 import { MOCK_LISTING_RECORDS } from '@/features/marketplace/constants/mockListings';
+import { MOCK_LISTING_REVIEWS } from '@/features/marketplace/constants/mockListingReviews';
 import type {
+  ListingCardView,
   ListingRecord,
   ListingSearchParams,
   ListingSearchResult,
 } from '@/features/marketplace/types/listings';
+import type { ListingDetailData } from '@/features/marketplace/types/listingDetail';
 import { normalizeVietnamese } from '@/utils/normalizeVietnamese';
 import { matchesAreaRange, matchesPriceRange } from '@/features/marketplace/utils/catalogBounds';
 import { isFutureDate, sortListingsByBoost } from '@/features/marketplace/utils/listingOrdering';
@@ -57,6 +60,54 @@ function isPublicActiveListing(record: ListingRecord, now: number) {
     record.listing.status === 'Active' &&
     (!record.listing.expireAt || isFutureDate(record.listing.expireAt, now))
   );
+}
+
+// TODO: nối API thật khi packages/types sinh xong:
+// GET /public/listings/{id}. Review giữ nguồn riêng vì A3 chỉ hiển thị empty state trong MVP.
+export async function getPublicListingDetail(listingId: string): Promise<ListingDetailData | null> {
+  await waitForMockRequest();
+  const now = Date.now();
+  const record = MOCK_LISTING_RECORDS.find(
+    (candidate) => candidate.listing.id === listingId && isPublicActiveListing(candidate, now),
+  );
+
+  if (!record) return null;
+
+  return {
+    record,
+    reviews: record.listing.propertyId
+      ? (MOCK_LISTING_REVIEWS[record.listing.propertyId] ?? [])
+      : [],
+  };
+}
+
+// TODO: nối API thật khi packages/types sinh xong:
+// GET /public/listings/{id}/similar. Trong mock giữ đúng tiêu chí prototype: cùng quận, giá ±30%.
+export async function getSimilarListings(
+  currentRecord: ListingRecord,
+  limit = 3,
+): Promise<readonly ListingCardView[]> {
+  await waitForMockRequest();
+  const now = Date.now();
+  const { district, id, price } = currentRecord.listing;
+  const minPrice = price * 0.7;
+  const maxPrice = price * 1.3;
+  const candidates = MOCK_LISTING_RECORDS.filter(
+    (candidate) =>
+      candidate.listing.id !== id &&
+      candidate.listing.district === district &&
+      candidate.listing.price >= minPrice &&
+      candidate.listing.price <= maxPrice &&
+      isPublicActiveListing(candidate, now),
+  );
+  const sortedRecords = sortListingsByBoost(
+    candidates,
+    (candidate) => candidate.listing.boostExpireAt,
+    (left, right) => compareListings(left, right, 'newest'),
+    now,
+  );
+
+  return sortedRecords.slice(0, Math.max(0, limit)).map((record) => toListingCardView(record, now));
 }
 
 function matchesFilters(record: ListingRecord, filters: ListingSearchParams) {
