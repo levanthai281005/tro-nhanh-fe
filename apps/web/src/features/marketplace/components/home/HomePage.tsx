@@ -3,7 +3,7 @@ import { HeroSection } from '@/features/marketplace/components/home/HeroSection'
 import { LandlordCTA } from '@/features/marketplace/components/home/LandlordCTA';
 import { MarketplaceSections } from '@/features/marketplace/components/home/MarketplaceSections';
 import { PostingCTASection } from '@/features/marketplace/components/home/PostingCTASection';
-import { SiteFooter } from '@/features/marketplace/components/home/SiteFooter';
+import { SiteFooter } from '@/features/marketplace/components/SiteFooter';
 import { WhyUsSection } from '@/features/marketplace/components/home/WhyUsSection';
 
 export function HomePage() {
