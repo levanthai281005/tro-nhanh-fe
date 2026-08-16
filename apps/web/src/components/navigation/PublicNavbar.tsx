@@ -16,13 +16,20 @@ export interface PublicNavbarProps {
   onSignOut?: () => void;
 }
 
+/**
+ * Mốc chuyển là `lg` (1024px), không phải `md` (768px).
+ *
+ * Bản desktop cần tối thiểu ~1000px mới xếp đủ logo + ô tìm kiếm + cụm điều hướng bên phải.
+ * Bật nó từ 768px khiến toàn site cuộn ngang trong khoảng 768–1023px — lỗi ở mọi trang, không
+ * riêng trang nào. Từ 1024px trở lên bản desktop mới thực sự vừa.
+ */
 export function PublicNavbar(props: PublicNavbarProps) {
   return (
     <>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <PublicNavbarDesktop {...props} />
       </div>
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <PublicNavbarMobile {...props} />
       </div>
     </>
