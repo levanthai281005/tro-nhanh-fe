@@ -88,7 +88,9 @@ export function FeaturedRoomsSection() {
       ) : listings.length === 0 ? (
         <Card className="px-6 py-10">
           <EmptyState
-            action={<Button onClick={() => router.push('/chu-tro/dang-tin')}>Đăng tin ngay</Button>}
+            action={
+              <Button onClick={() => router.push('/dang-tin-cho-thue')}>Đăng tin ngay</Button>
+            }
             description="Hiện chưa có tin đăng phòng trọ công khai nào trên hệ thống."
             title="Chưa có tin đăng phòng trọ nào"
           />

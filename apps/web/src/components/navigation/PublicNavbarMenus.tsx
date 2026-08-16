@@ -24,7 +24,7 @@ export function PostMenu(props: PostMenuProps) {
       </p>
       <MenuCard
         description="Dành cho chủ trọ muốn đăng phòng cho thuê."
-        href="/chu-tro/dang-tin"
+        href="/dang-tin-cho-thue"
         Icon={KeyRound}
         onClose={onClose}
         title="Đăng tin cho thuê"

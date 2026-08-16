@@ -74,7 +74,7 @@ export function PostingCTASection() {
                     icon={<ArrowRight aria-hidden="true" className="size-3.5" />}
                     onClick={() => {
                       if (isRenter) setIsPostTypeOpen(true);
-                      else router.push('/chu-tro/dang-tin');
+                      else router.push('/dang-tin-cho-thue');
                     }}
                     variant={isRenter ? 'primary' : 'outline'}
                   >
