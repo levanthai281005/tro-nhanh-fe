@@ -34,7 +34,7 @@ export function LandlordCTA() {
 
         <Link
           className="relative z-[2] inline-flex whitespace-nowrap rounded-md bg-surface px-[30px] py-3.5 text-[14.5px] font-bold text-primary shadow-lg transition hover:-translate-y-0.5 hover:bg-cream"
-          href="/chu-tro/dang-tin"
+          href="/dang-tin-cho-thue"
         >
           Đăng tin miễn phí ngay
           <ArrowRight aria-hidden="true" className="ml-2 size-4" />
