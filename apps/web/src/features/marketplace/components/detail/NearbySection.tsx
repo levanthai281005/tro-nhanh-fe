@@ -39,8 +39,13 @@ export function NearbySection({ detail }: NearbySectionProps) {
                 </div>
                 <ul className="space-y-[7px]">
                   {category.places.map((place) => (
-                    <li className="flex items-center justify-between gap-2" key={place.name}>
-                      <span className="truncate text-[13px] text-ink-muted">{place.name}</span>
+                    <li
+                      className="flex min-w-0 items-center justify-between gap-2"
+                      key={place.name}
+                    >
+                      <span className="min-w-0 truncate text-[13px] text-ink-muted">
+                        {place.name}
+                      </span>
                       <span className="shrink-0 rounded-full bg-sand-soft px-2.5 py-0.5 text-xs font-semibold text-sand">
                         {place.distance}
                       </span>

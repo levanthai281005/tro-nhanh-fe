@@ -39,8 +39,11 @@ export function MobileNearbySection({ detail }: MobileNearbySectionProps) {
                 </div>
                 <ul className="space-y-1.5">
                   {category.places.map((place) => (
-                    <li className="flex items-center justify-between gap-2" key={place.name}>
-                      <span className="truncate text-xs text-ink-muted">{place.name}</span>
+                    <li
+                      className="flex min-w-0 items-center justify-between gap-2"
+                      key={place.name}
+                    >
+                      <span className="min-w-0 truncate text-xs text-ink-muted">{place.name}</span>
                       <span className="shrink-0 rounded-full bg-sand-soft px-2 py-0.5 text-[11px] font-semibold text-sand">
                         {place.distance}
                       </span>
