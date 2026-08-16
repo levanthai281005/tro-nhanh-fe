@@ -16,11 +16,10 @@ export interface NearbyCategoryMeta {
  * Category labels and icons are shared taxonomy only. Named locations and their distances stay
  * on each listing's detail data; do not add a generic nearby-place fallback here.
  */
-export const NEARBY_CATEGORY_META: Readonly<
-  Record<ListingNearbyCategoryKey, NearbyCategoryMeta>
-> = {
-  shopping: { label: 'Mua sắm & Giải trí', Icon: ShoppingBag },
-  edu: { label: 'Giáo dục', Icon: GraduationCap },
-  health: { label: 'Y tế', Icon: HeartPulse },
-  food: { label: 'Ẩm thực', Icon: UtensilsCrossed },
-};
+export const NEARBY_CATEGORY_META: Readonly<Record<ListingNearbyCategoryKey, NearbyCategoryMeta>> =
+  {
+    shopping: { label: 'Mua sắm & Giải trí', Icon: ShoppingBag },
+    edu: { label: 'Giáo dục', Icon: GraduationCap },
+    health: { label: 'Y tế', Icon: HeartPulse },
+    food: { label: 'Ẩm thực', Icon: UtensilsCrossed },
+  };
