@@ -1,22 +1,16 @@
 import type {
-  ListingMedia,
-  RentalListing,
+  Amenity,
+  ListingCardView,
+  ListingRecord,
+  MarketplaceEntityFields,
+} from '@/features/marketplace/types/listings';
+import type {
   RentalListingStatus,
   RentalPropertyType,
 } from '@/features/marketplace/types/savedListings';
 
-export interface EntityFields {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
-
-export interface Amenity extends EntityFields {
-  name: string;
-  icon: string;
-  type: 'Room' | 'Surrounding';
-}
+export type EntityFields = MarketplaceEntityFields;
+export type { Amenity };
 
 export interface Profile extends EntityFields {
   userId: string;
@@ -54,26 +48,13 @@ export interface RoommateWantedPost extends EntityFields {
   expireAt: string;
 }
 
-export interface FeaturedListingRecord {
-  listing: RentalListing;
-  media: readonly ListingMedia[];
-  amenities: readonly Amenity[];
-}
+export type FeaturedListingRecord = ListingRecord;
 
 export type HomeDemandPostRecord =
   | { kind: 'RoomWanted'; post: RoomWantedPost; poster: Profile }
   | { kind: 'RoommateWanted'; post: RoommateWantedPost; poster: Profile };
 
-export interface FeaturedListingCardView {
-  id: string;
-  title: string;
-  price: number;
-  area: number;
-  location: string;
-  imageUrl: string;
-  amenities: readonly Pick<Amenity, 'icon' | 'name'>[];
-  badge: string | null;
-}
+export type FeaturedListingCardView = ListingCardView;
 
 interface DemandPostCardBase {
   id: string;

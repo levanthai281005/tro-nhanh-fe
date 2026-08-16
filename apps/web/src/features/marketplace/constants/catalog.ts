@@ -1,11 +1,20 @@
+import type { RentalPropertyType } from '@/features/marketplace/types/savedListings';
+
 /** Loại hình cho thuê dùng trong bộ lọc Marketplace. */
-export const PROPERTY_TYPES = [
-  'Phòng trọ',
-  'Căn hộ mini',
-  'Căn hộ dịch vụ',
-  'Ký túc xá',
-  'Nhà nguyên căn',
-] as const;
+export const PROPERTY_TYPES = ['Phòng trọ', 'Căn hộ dịch vụ', 'Căn hộ'] as const;
+
+export const PROPERTY_TYPE_VALUE_BY_LABEL: Readonly<
+  Record<(typeof PROPERTY_TYPES)[number], RentalPropertyType>
+> = {
+  'Phòng trọ': 'BoardingRoom',
+  'Căn hộ dịch vụ': 'ServicedApartment',
+  'Căn hộ': 'Apartment',
+};
+
+export const PROPERTY_TYPE_OPTIONS = PROPERTY_TYPES.map((label) => ({
+  label,
+  value: PROPERTY_TYPE_VALUE_BY_LABEL[label],
+}));
 
 /** Khoảng giá thống nhất cho Home và trang tìm kiếm. */
 export const PRICE_RANGES = ['Dưới 2 triệu', '2 – 4 triệu', '4 – 6 triệu', 'Trên 6 triệu'] as const;

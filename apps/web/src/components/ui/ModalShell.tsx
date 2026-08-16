@@ -8,9 +8,16 @@ export interface ModalShellProps {
   onClose: () => void;
   children: ReactNode;
   footer: ReactNode;
+  variant?: 'dialog' | 'bottom-sheet';
 }
 
-export function ModalShell({ title, onClose, children, footer }: ModalShellProps) {
+export function ModalShell({
+  title,
+  onClose,
+  children,
+  footer,
+  variant = 'dialog',
+}: ModalShellProps) {
   const titleId = useId();
 
   useEffect(() => {
@@ -27,12 +34,20 @@ export function ModalShell({ title, onClose, children, footer }: ModalShellProps
     <div
       aria-labelledby={titleId}
       aria-modal="true"
-      className="fixed inset-0 z-[300] flex items-center justify-center bg-ink/50 p-5"
+      className={
+        variant === 'bottom-sheet'
+          ? 'fixed inset-0 z-[300] flex items-end bg-ink/50 md:items-center md:justify-center md:p-5'
+          : 'fixed inset-0 z-[300] flex items-center justify-center bg-ink/50 p-5'
+      }
       onClick={onClose}
       role="dialog"
     >
       <div
-        className="max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[18px] bg-surface shadow-2xl"
+        className={
+          variant === 'bottom-sheet'
+            ? 'flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-[20px] bg-surface shadow-2xl md:max-w-[460px] md:rounded-[18px]'
+            : 'max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[18px] bg-surface shadow-2xl'
+        }
         onClick={stopPropagation}
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-5">
@@ -48,8 +63,16 @@ export function ModalShell({ title, onClose, children, footer }: ModalShellProps
             <X aria-hidden="true" className="size-5" />
           </button>
         </header>
-        <div className="flex flex-col gap-3.5 px-6 py-5">{children}</div>
-        <footer className="flex justify-end gap-2.5 border-t border-line px-6 py-4">
+        <div
+          className={
+            variant === 'bottom-sheet'
+              ? 'overflow-y-auto px-6 py-5'
+              : 'flex flex-col gap-3.5 px-6 py-5'
+          }
+        >
+          {children}
+        </div>
+        <footer className="flex shrink-0 justify-end gap-2.5 border-t border-line px-6 py-4">
           {footer}
         </footer>
       </div>
