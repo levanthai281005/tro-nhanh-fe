@@ -321,7 +321,10 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
       nearbyPlaces: [
         { key: 'shopping', places: [{ name: 'Landmark 81', distance: '2,3 km' }] },
         { key: 'edu', places: [{ name: 'Đại học Hồng Bàng CS Nguyễn Xí', distance: '700 m' }] },
-        { key: 'health', places: [{ name: 'Bệnh viện Ung bướu TP.HCM cơ sở 2', distance: '2,2 km' }] },
+        {
+          key: 'health',
+          places: [{ name: 'Bệnh viện Ung bướu TP.HCM cơ sở 2', distance: '2,2 km' }],
+        },
         { key: 'food', places: [{ name: 'Chợ Cây Quéo', distance: '1,4 km' }] },
       ],
     },
@@ -365,7 +368,10 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
       longitude: 106.698,
       nearbyPlaces: [
         { key: 'shopping', places: [{ name: 'Takashimaya Saigon Centre', distance: '1,1 km' }] },
-        { key: 'edu', places: [{ name: 'Đại học Khoa học Xã hội và Nhân văn', distance: '1,4 km' }] },
+        {
+          key: 'edu',
+          places: [{ name: 'Đại học Khoa học Xã hội và Nhân văn', distance: '1,4 km' }],
+        },
         { key: 'health', places: [{ name: 'Bệnh viện Nhi Đồng 2', distance: '1,9 km' }] },
         { key: 'food', places: [{ name: 'Chợ Bến Thành', distance: '1,2 km' }] },
       ],

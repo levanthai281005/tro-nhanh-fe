@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { hasValidListingCoordinates } from '@/features/marketplace/utils/listingLocation';
 
 export interface ListingLocationMapProps {
   latitude: number;
@@ -33,18 +34,6 @@ const LeafletMap = dynamic(
   },
 );
 
-function hasValidCoordinates(latitude: number, longitude: number) {
-  return (
-    Number.isFinite(latitude) &&
-    Number.isFinite(longitude) &&
-    latitude >= -90 &&
-    latitude <= 90 &&
-    longitude >= -180 &&
-    longitude <= 180 &&
-    !(latitude === 0 && longitude === 0)
-  );
-}
-
 function normalizeHeight(height: number | undefined) {
   return typeof height === 'number' && Number.isFinite(height) && height > 0
     ? height
@@ -67,7 +56,7 @@ export function ListingLocationMap({
   zoom,
   height,
 }: ListingLocationMapProps) {
-  if (!hasValidCoordinates(latitude, longitude)) return null;
+  if (!hasValidListingCoordinates(latitude, longitude)) return null;
 
   const resolvedHeight = normalizeHeight(height);
 

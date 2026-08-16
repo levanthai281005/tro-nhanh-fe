@@ -7,6 +7,8 @@ import { DescriptionSection } from '@/features/marketplace/components/detail/Des
 import { ImageGallery } from '@/features/marketplace/components/detail/ImageGallery';
 import { MobileContactCard } from '@/features/marketplace/components/detail/MobileContactCard';
 import { MobileImageCarousel } from '@/features/marketplace/components/detail/MobileImageCarousel';
+import { MobileNearbySection } from '@/features/marketplace/components/detail/MobileNearbySection';
+import { NearbySection } from '@/features/marketplace/components/detail/NearbySection';
 import { QuickStats } from '@/features/marketplace/components/detail/QuickStats';
 import { ReviewsSection } from '@/features/marketplace/components/detail/ReviewsSection';
 import { SimilarRooms } from '@/features/marketplace/components/detail/SimilarRooms';
@@ -50,6 +52,7 @@ export function RoomDetailPage({ detail, similarListings, viewerId }: RoomDetail
           <DescriptionSection detail={detail} />
           <QuickStats detail={detail} />
           <AmenitiesGrid detail={detail} />
+          <MobileNearbySection detail={detail} />
           <CostTable detail={detail} />
           <ReviewsSection detail={detail} />
           <SimilarRooms district={listing.district} listings={similarListings} />
@@ -72,6 +75,7 @@ export function RoomDetailPage({ detail, similarListings, viewerId }: RoomDetail
               <QuickStats detail={detail} />
               <AmenitiesGrid detail={detail} />
               <CostTable detail={detail} />
+              <NearbySection detail={detail} />
               <ReviewsSection detail={detail} />
               <SimilarRooms district={listing.district} listings={similarListings} />
               <SafetyNotice />
