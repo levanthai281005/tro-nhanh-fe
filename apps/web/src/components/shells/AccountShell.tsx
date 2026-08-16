@@ -31,25 +31,31 @@ const PROFILE_NAV: AccountNavItem[] = [
   { label: 'Hồ sơ & cài đặt', href: '/tai-khoan/ho-so', Icon: Settings },
 ];
 
+/**
+ * Khung khu vực tài khoản: sidebar điều hướng bên trái, nội dung chiếm phần còn lại, và
+ * **cả cụm được căn giữa màn hình** để lề hai bên luôn cân nhau ở mọi kích thước.
+ *
+ * Mức chặn 1600px thay cho 1280px cũ: bản cũ hẹp tới mức bảng danh sách phải cuộn ngang
+ * ngay cả trên màn 1920px. Trang nào cần hẹp hơn (form, bài đọc) thì tự đặt bề rộng riêng
+ * bên trong `main`.
+ */
 export function AccountShell({ children }: AccountShellProps) {
   const pathname = usePathname();
 
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-5 pb-[60px] pt-6">
-      <div className="flex flex-wrap items-start gap-6">
-        <aside className="w-full shrink-0 rounded-xl border border-line bg-surface px-3 py-4 md:w-[260px]">
-          <div className="border-b border-line px-3 pb-3 pt-2">
-            <h2 className="m-0 text-base font-extrabold text-ink">Tài khoản của tôi</h2>
-            <p className="mt-1 text-xs text-ink-muted">Tin đăng · Thuê trọ · Hồ sơ</p>
-          </div>
-          <nav className="flex flex-col gap-[3px]">
-            <AccountNavGroup label="Tin của tôi" items={POST_NAV} pathname={pathname} />
-            <AccountNavGroup label="Thuê trọ" items={RENTING_NAV} pathname={pathname} />
-            <AccountNavGroup label="Hồ sơ" items={PROFILE_NAV} pathname={pathname} />
-          </nav>
-        </aside>
-        <main className="min-w-0 flex-1">{children}</main>
-      </div>
+    <div className="mx-auto flex w-full max-w-[1600px] flex-col items-start gap-6 px-4 pb-[60px] pt-6 md:flex-row md:gap-8 md:px-6 lg:px-8">
+      <aside className="w-full shrink-0 rounded-xl border border-line bg-surface px-3 py-4 md:sticky md:top-6 md:w-[248px]">
+        <div className="border-b border-line px-3 pb-3 pt-2">
+          <h2 className="m-0 text-base font-extrabold text-ink">Tài khoản của tôi</h2>
+          <p className="mt-1 text-xs text-ink-muted">Tin đăng · Thuê trọ · Hồ sơ</p>
+        </div>
+        <nav className="flex flex-col gap-[3px]">
+          <AccountNavGroup label="Tin của tôi" items={POST_NAV} pathname={pathname} />
+          <AccountNavGroup label="Thuê trọ" items={RENTING_NAV} pathname={pathname} />
+          <AccountNavGroup label="Hồ sơ" items={PROFILE_NAV} pathname={pathname} />
+        </nav>
+      </aside>
+      <main className="w-full min-w-0 flex-1">{children}</main>
     </div>
   );
 }

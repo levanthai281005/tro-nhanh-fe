@@ -21,6 +21,7 @@ export function SavedListingsPage({ renterId }: SavedListingsPageProps) {
   const { data: listings = [], isPending, isError } = useSavedListings({ renterId });
 
   return (
+    // Bề rộng do AccountShell chặn và căn giữa.
     <div>
       <div className="mb-6">
         <h1 className="mb-1.5 mt-0 text-[22px] font-black tracking-[-0.02em] text-ink md:text-[28px]">
