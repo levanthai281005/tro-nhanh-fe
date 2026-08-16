@@ -32,17 +32,18 @@ const PROFILE_NAV: AccountNavItem[] = [
 ];
 
 /**
- * Khung khu vực tài khoản: điều hướng neo sát mép trái, nội dung chiếm phần còn lại.
+ * Khung khu vực tài khoản: sidebar điều hướng bên trái, nội dung chiếm phần còn lại, và
+ * **cả cụm được căn giữa màn hình** để lề hai bên luôn cân nhau ở mọi kích thước.
  *
- * Trước đây cả khung bị chặn ở 1280px nên trên màn rộng vẫn thừa hai bên mà bảng danh sách
- * lại phải cuộn ngang. Giờ khung trải hết bề ngang, còn **bề rộng tối đa do từng trang tự
- * quyết** — trang bảng/lưới dùng hết chỗ, trang form tự bó hẹp lại cho dễ đọc.
+ * Mức chặn 1600px thay cho 1280px cũ: bản cũ hẹp tới mức bảng danh sách phải cuộn ngang
+ * ngay cả trên màn 1920px. Trang nào cần hẹp hơn (form, bài đọc) thì tự đặt bề rộng riêng
+ * bên trong `main`.
  */
 export function AccountShell({ children }: AccountShellProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex w-full flex-col items-start gap-6 px-4 pb-[60px] pt-6 md:flex-row md:gap-8 md:px-6 lg:px-8">
+    <div className="mx-auto flex w-full max-w-[1600px] flex-col items-start gap-6 px-4 pb-[60px] pt-6 md:flex-row md:gap-8 md:px-6 lg:px-8">
       <aside className="w-full shrink-0 rounded-xl border border-line bg-surface px-3 py-4 md:sticky md:top-6 md:w-[248px]">
         <div className="border-b border-line px-3 pb-3 pt-2">
           <h2 className="m-0 text-base font-extrabold text-ink">Tài khoản của tôi</h2>

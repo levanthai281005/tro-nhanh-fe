@@ -113,9 +113,8 @@ export function MyListingsPage({ sellerId }: MyListingsPageProps) {
   };
 
   return (
-    // Trang bảng: dùng gần hết bề ngang, chỉ chặn ở mức đủ để bảng không giãn quá thưa
-    // trên màn siêu rộng. Trang dạng form trong cùng shell tự đặt mức hẹp hơn.
-    <div className="max-w-[1500px]">
+    // Bề rộng do AccountShell chặn và căn giữa; trang bảng dùng trọn phần được cấp.
+    <div>
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="mb-1.5 text-[21px] font-extrabold tracking-[-0.02em] text-ink md:text-[28px]">
