@@ -19,12 +19,9 @@ export interface SearchResultsRouteProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-function readSearchParam(
-  searchParams: Record<string, string | string[] | undefined>,
-  key: string,
-) {
+function readSearchParam(searchParams: Record<string, string | string[] | undefined>, key: string) {
   const value = searchParams[key];
-  return Array.isArray(value) ? value[0] ?? '' : value ?? '';
+  return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
 }
 
 function isPriceRange(value: string): value is PriceRange {

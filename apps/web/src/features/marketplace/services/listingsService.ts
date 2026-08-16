@@ -83,7 +83,9 @@ export async function searchListings(params: ListingSearchParams): Promise<Listi
   const pageStart = (resolvedPage - 1) * pageSize;
 
   return {
-    items: sortedRecords.slice(pageStart, pageStart + pageSize).map((record) => toListingCardView(record, now)),
+    items: sortedRecords
+      .slice(pageStart, pageStart + pageSize)
+      .map((record) => toListingCardView(record, now)),
     total,
     page: resolvedPage,
     pageSize,

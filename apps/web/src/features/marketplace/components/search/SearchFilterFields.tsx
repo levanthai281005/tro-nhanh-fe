@@ -1,4 +1,9 @@
-import { AREA_RANGES, AMENITIES, PRICE_RANGES, PROPERTY_TYPE_OPTIONS } from '@/features/marketplace/constants/catalog';
+import {
+  AREA_RANGES,
+  AMENITIES,
+  PRICE_RANGES,
+  PROPERTY_TYPE_OPTIONS,
+} from '@/features/marketplace/constants/catalog';
 import type { ListingSearchFilters } from '@/features/marketplace/types/listings';
 import { cn } from '@/utils/cn';
 
@@ -52,7 +57,10 @@ export function SearchFilterFields({ filters, onChange }: SearchFilterFieldsProp
           {PROPERTY_TYPE_OPTIONS.map(({ label, value }) => {
             const isChecked = filters.propertyTypes.includes(value);
             return (
-              <label className="flex cursor-pointer items-center gap-2.5 text-sm text-ink" key={value}>
+              <label
+                className="flex cursor-pointer items-center gap-2.5 text-sm text-ink"
+                key={value}
+              >
                 <input
                   checked={isChecked}
                   className="size-4 accent-primary"

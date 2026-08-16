@@ -1,7 +1,4 @@
-import type {
-  AreaRange,
-  PriceRange,
-} from '@/features/marketplace/types/listings';
+import type { AreaRange, PriceRange } from '@/features/marketplace/types/listings';
 
 export function matchesPriceRange(price: number, range: PriceRange | '') {
   switch (range) {

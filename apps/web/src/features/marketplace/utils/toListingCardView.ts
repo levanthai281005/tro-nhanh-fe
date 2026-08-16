@@ -1,7 +1,4 @@
-import type {
-  ListingCardView,
-  ListingRecord,
-} from '@/features/marketplace/types/listings';
+import type { ListingCardView, ListingRecord } from '@/features/marketplace/types/listings';
 import { isFutureDate } from '@/features/marketplace/utils/listingOrdering';
 
 const RECENT_LISTING_WINDOW_MS = 72 * 60 * 60 * 1000;

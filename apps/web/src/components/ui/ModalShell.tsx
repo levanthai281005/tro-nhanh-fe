@@ -63,7 +63,13 @@ export function ModalShell({
             <X aria-hidden="true" className="size-5" />
           </button>
         </header>
-        <div className={variant === 'bottom-sheet' ? 'overflow-y-auto px-6 py-5' : 'flex flex-col gap-3.5 px-6 py-5'}>
+        <div
+          className={
+            variant === 'bottom-sheet'
+              ? 'overflow-y-auto px-6 py-5'
+              : 'flex flex-col gap-3.5 px-6 py-5'
+          }
+        >
           {children}
         </div>
         <footer className="flex shrink-0 justify-end gap-2.5 border-t border-line px-6 py-4">

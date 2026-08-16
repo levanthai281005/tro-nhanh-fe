@@ -7,10 +7,15 @@ export function SearchPageHeader({ total, isFiltered }: SearchPageHeaderProps) {
   return (
     <header className="border-b border-line bg-sand-soft px-4 py-6 md:px-8">
       <div className="mx-auto max-w-[1200px]">
-        <nav aria-label="Breadcrumb" className="mb-2.5 flex items-center gap-2 text-[13px] text-ink-muted">
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-2.5 flex items-center gap-2 text-[13px] text-ink-muted"
+        >
           <span>Trang chủ</span>
           <span aria-hidden="true">/</span>
-          <span className="font-semibold text-ink">{isFiltered ? 'Kết quả tìm phòng' : 'Tất cả phòng'}</span>
+          <span className="font-semibold text-ink">
+            {isFiltered ? 'Kết quả tìm phòng' : 'Tất cả phòng'}
+          </span>
         </nav>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>

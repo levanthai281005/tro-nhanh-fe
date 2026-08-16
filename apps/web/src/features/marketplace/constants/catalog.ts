@@ -1,11 +1,7 @@
 import type { RentalPropertyType } from '@/features/marketplace/types/savedListings';
 
 /** Loại hình cho thuê dùng trong bộ lọc Marketplace. */
-export const PROPERTY_TYPES = [
-  'Phòng trọ',
-  'Căn hộ dịch vụ',
-  'Căn hộ',
-] as const;
+export const PROPERTY_TYPES = ['Phòng trọ', 'Căn hộ dịch vụ', 'Căn hộ'] as const;
 
 export const PROPERTY_TYPE_VALUE_BY_LABEL: Readonly<
   Record<(typeof PROPERTY_TYPES)[number], RentalPropertyType>

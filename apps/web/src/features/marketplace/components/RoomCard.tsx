@@ -74,7 +74,11 @@ export function RoomCard({ listing, variant }: RoomCardProps) {
       <div
         className={cn(
           'relative shrink-0 overflow-hidden',
-          variant === 'mobile' ? 'w-[140px]' : variant === 'list' ? 'w-[220px]' : 'h-[190px] w-full',
+          variant === 'mobile'
+            ? 'w-[140px]'
+            : variant === 'list'
+              ? 'w-[220px]'
+              : 'h-[190px] w-full',
         )}
       >
         <Image

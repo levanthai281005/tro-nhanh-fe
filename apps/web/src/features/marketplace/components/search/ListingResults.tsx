@@ -48,7 +48,9 @@ export function ListingResults({
   if (isError) {
     return (
       <Card className="py-12 text-center" role="alert">
-        <p className="font-semibold text-error">Không tải được danh sách phòng. Vui lòng thử lại.</p>
+        <p className="font-semibold text-error">
+          Không tải được danh sách phòng. Vui lòng thử lại.
+        </p>
         <Button className="mt-4" onClick={onRetry} variant="outline">
           Thử lại
         </Button>
@@ -94,10 +96,20 @@ export function ListingResults({
         }
       >
         {items.map((listing) => (
-          <RoomCard key={listing.id} listing={listing} variant={viewMode === 'list' ? 'list' : 'desktop'} />
+          <RoomCard
+            key={listing.id}
+            listing={listing}
+            variant={viewMode === 'list' ? 'list' : 'desktop'}
+          />
         ))}
       </div>
-      <Pagination className="mt-8 border-t border-line pt-7" onChange={onPageChange} page={page} pageSize={pageSize} total={total} />
+      <Pagination
+        className="mt-8 border-t border-line pt-7"
+        onChange={onPageChange}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+      />
     </>
   );
 }

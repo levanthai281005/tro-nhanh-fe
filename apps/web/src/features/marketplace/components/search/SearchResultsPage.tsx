@@ -7,9 +7,7 @@ import {
   type ActiveFilterChip,
 } from '@/features/marketplace/components/search/ActiveFilterChips';
 import { FilterSidebar } from '@/features/marketplace/components/search/FilterSidebar';
-import {
-  ListingResults,
-} from '@/features/marketplace/components/search/ListingResults';
+import { ListingResults } from '@/features/marketplace/components/search/ListingResults';
 import {
   ListingToolbar,
   MobileListingToolbar,
@@ -22,10 +20,7 @@ import { SearchPageHeader } from '@/features/marketplace/components/search/Searc
 import type { InitialSearchFilters } from '@/features/marketplace/components/search/SearchResultsRoute';
 import { PROPERTY_TYPE_OPTIONS } from '@/features/marketplace/constants/catalog';
 import { useListings } from '@/features/marketplace/hooks/useListings';
-import type {
-  ListingSearchFilters,
-  ListingSort,
-} from '@/features/marketplace/types/listings';
+import type { ListingSearchFilters, ListingSort } from '@/features/marketplace/types/listings';
 
 export interface SearchResultsPageProps {
   initialFilters: InitialSearchFilters;

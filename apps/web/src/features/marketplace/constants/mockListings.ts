@@ -1,7 +1,4 @@
-import type {
-  ListingRecord,
-  MarketplaceEntityFields,
-} from '@/features/marketplace/types/listings';
+import type { ListingRecord, MarketplaceEntityFields } from '@/features/marketplace/types/listings';
 import type {
   RentalListing,
   RentalListingStatus,
