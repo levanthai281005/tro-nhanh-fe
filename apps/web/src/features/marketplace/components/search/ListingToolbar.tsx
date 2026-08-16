@@ -1,4 +1,4 @@
-import { LayoutGrid, List, Map } from 'lucide-react';
+import { ArrowUpDown, LayoutGrid, List, Map, SlidersHorizontal } from 'lucide-react';
 import { AppSelect, type SelectOption } from '@/components/ui/AppSelect';
 import type { ListingSort } from '@/features/marketplace/types/listings';
 import { cn } from '@/utils/cn';
@@ -78,6 +78,33 @@ export function ListingToolbar({
   );
 }
 
+export interface MobileListingToolbarProps {
+  total: number;
+  isMapActive: boolean;
+  onFilter: () => void;
+  onSort: () => void;
+  onMap: () => void;
+}
+
+export function MobileListingToolbar({
+  total,
+  isMapActive,
+  onFilter,
+  onSort,
+  onMap,
+}: MobileListingToolbarProps) {
+  return (
+    <div className="flex items-center gap-2 border-y border-line bg-surface px-4 py-2.5">
+      <span className="min-w-0 flex-1 truncate text-sm font-bold text-ink">
+        {total.toLocaleString('vi-VN')} phòng
+      </span>
+      <ToolbarButton Icon={SlidersHorizontal} label="Lọc" onClick={onFilter} primary />
+      <ToolbarButton Icon={ArrowUpDown} label="Sắp xếp" onClick={onSort} />
+      <ToolbarButton Icon={Map} label="Bản đồ" onClick={onMap} active={isMapActive} compact />
+    </div>
+  );
+}
+
 function ViewButton({
   active,
   Icon,
@@ -101,6 +128,43 @@ function ViewButton({
     >
       <Icon aria-hidden="true" className="size-3.5" />
       {label}
+    </button>
+  );
+}
+
+function ToolbarButton({
+  active = false,
+  compact = false,
+  Icon,
+  label,
+  onClick,
+  primary = false,
+}: {
+  active?: boolean;
+  compact?: boolean;
+  Icon: typeof LayoutGrid;
+  label: string;
+  onClick: () => void;
+  primary?: boolean;
+}) {
+  return (
+    <button
+      aria-label={label}
+      aria-pressed={active || undefined}
+      className={cn(
+        'inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-sm border px-3 text-[13px] font-semibold transition-colors',
+        primary
+          ? 'border-primary text-primary hover:bg-sand-soft'
+          : active
+            ? 'border-primary bg-primary text-surface'
+            : 'border-line text-ink-muted hover:bg-cream',
+        compact && 'px-2.5',
+      )}
+      onClick={onClick}
+      type="button"
+    >
+      <Icon aria-hidden="true" className="size-3.5" />
+      {compact ? <span className="sr-only">{label}</span> : label}
     </button>
   );
 }

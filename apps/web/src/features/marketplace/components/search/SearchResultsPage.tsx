@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
 import {
   ActiveFilterChips,
   type ActiveFilterChip,
@@ -11,9 +12,12 @@ import {
 } from '@/features/marketplace/components/search/ListingResults';
 import {
   ListingToolbar,
+  MobileListingToolbar,
   type ListingViewMode,
 } from '@/features/marketplace/components/search/ListingToolbar';
 import { MapPlaceholder } from '@/features/marketplace/components/search/MapPlaceholder';
+import { MobileFilterSheet } from '@/features/marketplace/components/search/MobileFilterSheet';
+import { MobileSortSheet } from '@/features/marketplace/components/search/MobileSortSheet';
 import { SearchPageHeader } from '@/features/marketplace/components/search/SearchPageHeader';
 import type { InitialSearchFilters } from '@/features/marketplace/components/search/SearchResultsRoute';
 import { PROPERTY_TYPE_OPTIONS } from '@/features/marketplace/constants/catalog';
@@ -57,6 +61,9 @@ export function SearchResultsPage({ initialFilters }: SearchResultsPageProps) {
   const [sort, setSort] = useState<ListingSort>('newest');
   const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState<ListingViewMode>('grid');
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [mobileSortOpen, setMobileSortOpen] = useState(false);
+  const [mobileKeyword, setMobileKeyword] = useState(initialFilters.keyword);
   const listingQuery = useListings({ ...filters, sort, page, pageSize: PAGE_SIZE });
 
   useEffect(() => {
@@ -65,15 +72,18 @@ export function SearchResultsPage({ initialFilters }: SearchResultsPageProps) {
     setSort('newest');
     setPage(1);
     setViewMode('grid');
+    setMobileKeyword(initialFilters.keyword);
   }, [initialFilters]);
 
   const applyFilters = () => {
     setFilters(pendingFilters);
+    setMobileKeyword(pendingFilters.keyword);
     setPage(1);
   };
   const clearFilters = () => {
     setFilters(EMPTY_FILTERS);
     setPendingFilters(EMPTY_FILTERS);
+    setMobileKeyword('');
     setPage(1);
   };
   const removeFilter = (chipId: string) => {
@@ -96,6 +106,14 @@ export function SearchResultsPage({ initialFilters }: SearchResultsPageProps) {
     })();
     setFilters(nextFilters);
     setPendingFilters(nextFilters);
+    if (chipId === 'keyword') setMobileKeyword('');
+    setPage(1);
+  };
+  const applyMobileKeyword = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const nextFilters = { ...filters, keyword: mobileKeyword.trim() };
+    setFilters(nextFilters);
+    setPendingFilters(nextFilters);
     setPage(1);
   };
   const activeFilterChips = getActiveFilterChips(filters);
@@ -107,6 +125,35 @@ export function SearchResultsPage({ initialFilters }: SearchResultsPageProps) {
     <>
       <div className="hidden md:block">
         <SearchPageHeader isFiltered={isFiltered} total={total} />
+      </div>
+      <div className="md:hidden">
+        <form className="bg-canvas px-4 py-3" onSubmit={applyMobileKeyword}>
+          <label className="flex h-11 items-center gap-2 rounded-sm border border-line bg-surface px-3 shadow-sm focus-within:border-sand">
+            <Search aria-hidden="true" className="size-4 shrink-0 text-ink-muted" />
+            <input
+              className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink-muted"
+              onChange={(event) => setMobileKeyword(event.target.value)}
+              placeholder="Tìm khu vực, trường học..."
+              value={mobileKeyword}
+            />
+            <button className="text-[13px] font-bold text-primary" type="submit">
+              Tìm
+            </button>
+          </label>
+        </form>
+        <MobileListingToolbar
+          isMapActive={viewMode === 'map'}
+          onFilter={() => {
+            setPendingFilters(filters);
+            setMobileFilterOpen(true);
+          }}
+          onMap={() => setViewMode((current) => (current === 'map' ? 'grid' : 'map'))}
+          onSort={() => setMobileSortOpen(true)}
+          total={total}
+        />
+        <div className="px-4 py-2.5">
+          <ActiveFilterChips chips={activeFilterChips} onRemove={removeFilter} />
+        </div>
       </div>
       <main className="mx-auto flex w-full max-w-[1200px] gap-7 px-4 py-6 md:px-8 md:py-8">
         <aside className="hidden w-[300px] shrink-0 md:block">
@@ -155,6 +202,23 @@ export function SearchResultsPage({ initialFilters }: SearchResultsPageProps) {
           </div>
         </section>
       </main>
+      <MobileFilterSheet
+        filters={pendingFilters}
+        onApply={applyFilters}
+        onChange={setPendingFilters}
+        onClear={clearFilters}
+        onClose={() => setMobileFilterOpen(false)}
+        open={mobileFilterOpen}
+      />
+      <MobileSortSheet
+        onChange={(nextSort) => {
+          setSort(nextSort);
+          setPage(1);
+        }}
+        onClose={() => setMobileSortOpen(false)}
+        open={mobileSortOpen}
+        sort={sort}
+      />
     </>
   );
 }
