@@ -16,8 +16,9 @@ export function BottomTabBar(props: BottomTabBarProps) {
   const activeTab = getActiveBottomTab(pathname);
 
   return (
+    // Ẩn từ `lg` cho khớp mốc chuyển của PublicNavbar: thanh tab dưới đi cùng navbar mobile.
     <nav
-      className="sticky bottom-0 z-[100] flex h-[60px] shrink-0 border-t border-line bg-surface shadow-lg md:hidden"
+      className="sticky bottom-0 z-[100] flex h-[60px] shrink-0 border-t border-line bg-surface shadow-lg lg:hidden"
       data-testid="mobile-tab-bar"
     >
       {BOTTOM_TABS.map(({ id, Icon, label, href, requiresAuth, showsUnread }) => {

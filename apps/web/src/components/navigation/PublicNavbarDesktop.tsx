@@ -51,8 +51,9 @@ export function PublicNavbarDesktop({
 
   return (
     <nav
+      // Khoảng 1024–1279px chỉ vừa đủ chỗ: thu gọn padding và khoảng cách, nới lại từ `xl`.
       className={cn(
-        'sticky top-0 z-[100] flex h-[68px] items-center gap-4 border-b bg-surface px-7 transition duration-200',
+        'sticky top-0 z-[100] flex h-[68px] items-center gap-2 border-b bg-surface px-4 transition duration-200 xl:gap-4 xl:px-7',
         isScrolled ? 'border-line shadow-md' : 'border-transparent shadow-sm',
       )}
     >
@@ -60,7 +61,7 @@ export function PublicNavbarDesktop({
         <BrandLogo size="md" />
       </Link>
 
-      <div className="flex flex-1 justify-center px-5">
+      <div className="flex min-w-0 flex-1 justify-center px-2 xl:px-5">
         <form
           className="flex w-full max-w-[450px] items-center gap-2.5 rounded-full border-[1.5px] border-line bg-surface py-2 pl-[18px] pr-3.5 shadow-sm transition focus-within:border-sand hover:border-sand"
           onSubmit={goToSearch}
@@ -174,7 +175,7 @@ export function PublicNavbarDesktop({
 function NavLink({ href, children }: { href: string; children: string }) {
   return (
     <Link
-      className="rounded-sm px-3 py-2 text-[13.5px] text-ink-muted transition-colors hover:bg-canvas hover:font-semibold hover:text-primary-press"
+      className="whitespace-nowrap rounded-sm px-2.5 py-2 text-[13.5px] text-ink-muted transition-colors hover:bg-canvas hover:font-semibold hover:text-primary-press xl:px-3"
       href={href}
     >
       {children}
@@ -182,6 +183,10 @@ function NavLink({ href, children }: { href: string; children: string }) {
   );
 }
 
+/**
+ * Dưới `xl` chỉ hiện icon: nhãn chữ giữ nguyên thì cụm bên phải không co đủ để navbar vừa
+ * màn 1024px. `aria-label` gánh phần tên gọi khi chữ bị ẩn.
+ */
 function NavIconLink({
   href,
   label,
@@ -193,11 +198,12 @@ function NavIconLink({
 }) {
   return (
     <Link
-      className="flex items-center gap-1 rounded-sm px-3 py-2 text-[13.5px] text-ink-muted transition-colors hover:bg-cream"
+      aria-label={label}
+      className="flex items-center gap-1 rounded-sm px-2.5 py-2 text-[13.5px] text-ink-muted transition-colors hover:bg-cream xl:px-3"
       href={href}
     >
       {children}
-      <span className="whitespace-nowrap">{label}</span>
+      <span className="hidden whitespace-nowrap xl:inline">{label}</span>
     </Link>
   );
 }
