@@ -86,6 +86,7 @@ export function StickyContactCard({ detail, viewerId }: StickyContactCardProps) 
           ) : (
             <div className="flex flex-col gap-2.5">
               <Button
+                data-testid="listing-chat-btn"
                 fullWidth
                 icon={<MessageSquare aria-hidden="true" className="size-4" />}
                 onClick={handleMessage}
@@ -93,6 +94,7 @@ export function StickyContactCard({ detail, viewerId }: StickyContactCardProps) 
                 Gửi tin nhắn
               </Button>
               <Button
+                data-testid="listing-phone-btn"
                 fullWidth
                 icon={<Phone aria-hidden="true" className="size-4" />}
                 onClick={() => setPhoneOpen(true)}
