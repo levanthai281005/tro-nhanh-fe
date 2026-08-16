@@ -1,12 +1,14 @@
 'use client';
 
 import Image from 'next/image';
+import { Fragment } from 'react';
 import {
   ListingActionGroup,
   ListingStatusChip,
   RejectionNotice,
 } from '@/features/marketplace/components/my-listings/ListingRowActions';
 import type { MyListingRow } from '@/features/marketplace/types/myListings';
+import { cn } from '@/utils/cn';
 
 const COLUMNS = ['Tin đăng', 'Khu vực', 'Giá hiển thị', 'Trạng thái tin', 'Cập nhật', 'Thao tác'];
 
@@ -71,69 +73,82 @@ export function MyListingsTable({
               const isBusy = busyListingId === row.id;
 
               return (
-                <tr
-                  className="border-b border-line last:border-b-0 hover:bg-cream/20"
-                  data-listing-id={row.id}
-                  data-listing-status={row.status}
-                  data-testid="my-listing-row"
-                  key={row.id}
-                >
-                  <td className="max-w-[320px] px-4 py-3.5 align-middle">
-                    <div className="flex items-center gap-3">
-                      <span className="relative size-[54px] shrink-0 overflow-hidden rounded-md border border-line">
-                        <Image
-                          alt=""
-                          className="object-cover"
-                          fill
-                          sizes="54px"
-                          src={row.imageUrl}
-                        />
-                      </span>
-                      <span className="flex min-w-0 flex-col gap-0.5">
-                        <span
-                          className="truncate text-[13.5px] font-extrabold text-ink"
-                          title={row.title}
-                        >
-                          {row.title}
+                <Fragment key={row.id}>
+                  <tr
+                    className={cn(
+                      'hover:bg-cream/20',
+                      row.rejectReason ? '' : 'border-b border-line last:border-b-0',
+                    )}
+                    data-listing-id={row.id}
+                    data-listing-status={row.status}
+                    data-testid="my-listing-row"
+                  >
+                    <td className="max-w-[320px] px-4 py-3.5 align-middle">
+                      <div className="flex items-center gap-3">
+                        <span className="relative size-[54px] shrink-0 overflow-hidden rounded-md border border-line">
+                          <Image
+                            alt=""
+                            className="object-cover"
+                            fill
+                            sizes="54px"
+                            src={row.imageUrl}
+                          />
                         </span>
-                        <span className="text-[11px] font-semibold text-ink-muted">
-                          {shortCode(row.id)}
+                        <span className="flex min-w-0 flex-col gap-0.5">
+                          <span
+                            className="truncate text-[13.5px] font-extrabold text-ink"
+                            title={row.title}
+                          >
+                            {row.title}
+                          </span>
+                          <span className="text-[11px] font-semibold text-ink-muted">
+                            {shortCode(row.id)}
+                          </span>
                         </span>
-                      </span>
-                    </div>
-                  </td>
+                      </div>
+                    </td>
 
-                  <td className="px-4 py-3.5 align-middle text-[13.5px] font-semibold text-ink-muted">
-                    {row.district}
-                  </td>
+                    <td className="px-4 py-3.5 align-middle text-[13.5px] font-semibold text-ink-muted">
+                      {row.district}
+                    </td>
 
-                  <td className="whitespace-nowrap px-4 py-3.5 align-middle text-sm font-extrabold text-primary">
-                    {formatVnd(row.price)}
-                  </td>
+                    <td className="whitespace-nowrap px-4 py-3.5 align-middle text-sm font-extrabold text-primary">
+                      {formatVnd(row.price)}
+                    </td>
 
-                  <td className="px-4 py-3.5 align-middle">
-                    <ListingStatusChip row={row} />
-                    <RejectionNotice onEdit={() => onEdit(row)} reason={row.rejectReason} />
-                  </td>
+                    <td className="px-4 py-3.5 align-middle">
+                      <ListingStatusChip row={row} />
+                    </td>
 
-                  <td className="whitespace-nowrap px-4 py-3.5 align-middle text-xs text-ink-muted">
-                    <span className="block font-semibold">{updated.day}</span>
-                    <span className="block text-[10.5px]">{updated.time}</span>
-                  </td>
+                    <td className="whitespace-nowrap px-4 py-3.5 align-middle text-xs text-ink-muted">
+                      <span className="block font-semibold">{updated.day}</span>
+                      <span className="block text-[10.5px]">{updated.time}</span>
+                    </td>
 
-                  <td className="px-4 py-3.5 align-middle">
-                    <ListingActionGroup
-                      isBusy={isBusy}
-                      onBoost={() => onBoost(row)}
-                      onDelete={() => onDelete(row)}
-                      onEdit={() => onEdit(row)}
-                      onRenew={() => onRenew(row)}
-                      onToggleVisibility={() => onToggleVisibility(row)}
-                      onView={() => onView(row)}
-                      row={row}
-                    />
-                  </td>
-                </tr>
+                    <td className="px-4 py-3.5 align-middle">
+                      <ListingActionGroup
+                        isBusy={isBusy}
+                        onBoost={() => onBoost(row)}
+                        onDelete={() => onDelete(row)}
+                        onEdit={() => onEdit(row)}
+                        onRenew={() => onRenew(row)}
+                        onToggleVisibility={() => onToggleVisibility(row)}
+                        onView={() => onView(row)}
+                        row={row}
+                      />
+                    </td>
+                  </tr>
+
+                  {/* Lý do từ chối trải hết chiều rộng bảng: nhét vào ô trạng thái (~130px) thì
+                    mỗi từ rơi một dòng, đẩy chiều cao hàng lên gấp năm lần hàng thường. */}
+                  {row.rejectReason ? (
+                    <tr className="border-b border-line last:border-b-0">
+                      <td className="px-4 pb-3.5 pt-0" colSpan={COLUMNS.length}>
+                        <RejectionNotice onEdit={() => onEdit(row)} reason={row.rejectReason} />
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
               );
             })}
           </tbody>
