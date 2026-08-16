@@ -1,12 +1,12 @@
-import {
-  MOCK_FEATURED_LISTING_RECORDS,
-  MOCK_HOME_DEMAND_POST_RECORDS,
-} from '@/features/marketplace/constants/mockHomeData';
+import { MOCK_HOME_DEMAND_POST_RECORDS } from '@/features/marketplace/constants/mockHomeData';
+import { MOCK_LISTING_RECORDS } from '@/features/marketplace/constants/mockListings';
 import type {
   DemandPostCardView,
   FeaturedListingCardView,
   HomeDemandPostRecord,
 } from '@/features/marketplace/types/home';
+import { isFutureDate, sortListingsByBoost } from '@/features/marketplace/utils/listingOrdering';
+import { toListingCardView } from '@/features/marketplace/utils/toListingCardView';
 
 const MOCK_REQUEST_DELAY_MS = 180;
 
@@ -16,48 +16,24 @@ function waitForMockRequest() {
   });
 }
 
-function isFutureDate(value: string | null, now: number) {
-  if (!value) return false;
-  const timestamp = Date.parse(value);
-  return Number.isFinite(timestamp) && timestamp > now;
-}
-
-function toFeaturedListingCard(
-  record: (typeof MOCK_FEATURED_LISTING_RECORDS)[number],
-  now: number,
-): FeaturedListingCardView {
-  const isBoosted = isFutureDate(record.listing.boostExpireAt, now);
-  return {
-    id: record.listing.id,
-    title: record.listing.title,
-    price: record.listing.price,
-    area: record.listing.area,
-    location: `${record.listing.district}, TP.HCM`,
-    imageUrl: record.media[0]?.url ?? '',
-    amenities: record.amenities.map(({ icon, name }) => ({ icon, name })),
-    badge: isBoosted ? 'Tin nổi bật' : 'Mới đăng',
-  };
-}
-
 // TODO: nối API thật khi packages/types sinh xong:
 // GET /public/listings?status=Active&limit={limit} qua @tronhanh/api.
 export async function getFeaturedListings(limit = 4): Promise<readonly FeaturedListingCardView[]> {
   await waitForMockRequest();
   const now = Date.now();
 
-  return MOCK_FEATURED_LISTING_RECORDS.filter(
-    (record) =>
-      record.listing.status === 'Active' &&
-      (!record.listing.expireAt || isFutureDate(record.listing.expireAt, now)),
+  return sortListingsByBoost(
+    MOCK_LISTING_RECORDS.filter(
+      (record) =>
+        record.listing.status === 'Active' &&
+        (!record.listing.expireAt || isFutureDate(record.listing.expireAt, now)),
+    ),
+    (record) => record.listing.boostExpireAt,
+    (left, right) => right.listing.createdAt.localeCompare(left.listing.createdAt),
+    now,
   )
-    .toSorted((left, right) => {
-      const leftBoosted = isFutureDate(left.listing.boostExpireAt, now);
-      const rightBoosted = isFutureDate(right.listing.boostExpireAt, now);
-      if (leftBoosted !== rightBoosted) return leftBoosted ? -1 : 1;
-      return right.listing.createdAt.localeCompare(left.listing.createdAt);
-    })
     .slice(0, Math.max(0, limit))
-    .map((record) => toFeaturedListingCard(record, now));
+    .map((record) => toListingCardView(record, now));
 }
 
 function initialsFromName(fullName: string) {

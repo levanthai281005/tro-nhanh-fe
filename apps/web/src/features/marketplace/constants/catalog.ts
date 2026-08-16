@@ -1,10 +1,8 @@
 /** Loại hình cho thuê dùng trong bộ lọc Marketplace. */
 export const PROPERTY_TYPES = [
   'Phòng trọ',
-  'Căn hộ mini',
   'Căn hộ dịch vụ',
-  'Ký túc xá',
-  'Nhà nguyên căn',
+  'Căn hộ',
 ] as const;
 
 /** Khoảng giá thống nhất cho Home và trang tìm kiếm. */

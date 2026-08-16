@@ -17,12 +17,12 @@ import { useRouter } from 'next/navigation';
 import type { KeyboardEvent } from 'react';
 import { Card } from '@/components/ui/Card';
 import { SaveListingButton } from '@/features/marketplace/components/SaveListingButton';
-import type { FeaturedListingCardView } from '@/features/marketplace/types/home';
+import type { ListingCardView } from '@/features/marketplace/types/listings';
 import { cn } from '@/utils/cn';
 
 export interface RoomCardProps {
-  listing: FeaturedListingCardView;
-  variant: 'mobile' | 'desktop';
+  listing: ListingCardView;
+  variant: 'mobile' | 'desktop' | 'list';
 }
 
 const AMENITY_META: Readonly<Record<string, LucideIcon>> = {
@@ -57,7 +57,11 @@ export function RoomCard({ listing, variant }: RoomCardProps) {
       aria-label={`Xem tin ${listing.title}`}
       className={cn(
         'group flex overflow-hidden p-0',
-        variant === 'mobile' ? 'min-h-[140px] flex-row' : 'h-full flex-col',
+        variant === 'mobile'
+          ? 'min-h-[140px] flex-row'
+          : variant === 'list'
+            ? 'min-h-[172px] flex-row'
+            : 'h-full flex-col',
       )}
       data-listing-id={listing.id}
       data-testid="listing-card"
@@ -70,14 +74,20 @@ export function RoomCard({ listing, variant }: RoomCardProps) {
       <div
         className={cn(
           'relative shrink-0 overflow-hidden',
-          variant === 'mobile' ? 'w-[140px]' : 'h-[190px] w-full',
+          variant === 'mobile' ? 'w-[140px]' : variant === 'list' ? 'w-[220px]' : 'h-[190px] w-full',
         )}
       >
         <Image
           alt={listing.title}
           className="object-cover transition duration-500 group-hover:scale-105"
           fill
-          sizes={variant === 'mobile' ? '140px' : '(min-width: 1024px) 25vw, 50vw'}
+          sizes={
+            variant === 'mobile'
+              ? '140px'
+              : variant === 'list'
+                ? '220px'
+                : '(min-width: 1024px) 25vw, 50vw'
+          }
           src={listing.imageUrl}
         />
         <SaveListingButton listingId={listing.id} overlay size={15} />
@@ -85,8 +95,15 @@ export function RoomCard({ listing, variant }: RoomCardProps) {
           Còn trống
         </span>
         {listing.badge ? (
-          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-sm bg-primary px-2 py-1 text-[10px] font-bold text-surface shadow-sm">
-            <Star aria-hidden="true" className="size-2.5 fill-surface" strokeWidth={0} />
+          <span
+            className={cn(
+              'absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-sm px-2 py-1 text-[10px] font-bold text-surface shadow-sm',
+              listing.badge === 'Tin nổi bật' ? 'bg-primary' : 'bg-accent-warn',
+            )}
+          >
+            {listing.badge === 'Tin nổi bật' ? (
+              <Star aria-hidden="true" className="size-2.5 fill-surface" strokeWidth={0} />
+            ) : null}
             {listing.badge}
           </span>
         ) : null}

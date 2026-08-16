@@ -8,7 +8,7 @@ const DISCOVERY_LINKS = [
     label: 'Căn hộ dịch vụ',
     href: '/tim-phong?type=C%C4%83n%20h%E1%BB%99%20d%E1%BB%8Bch%20v%E1%BB%A5',
   },
-  { label: 'Nhà nguyên căn', href: '/tim-phong?type=Nh%C3%A0%20nguy%C3%AAn%20c%C4%83n' },
+  { label: 'Căn hộ', href: '/tim-phong?type=C%C4%83n%20h%E1%BB%99' },
   { label: 'Văn phòng cho thuê', href: '/tim-phong' },
 ] as const;
 

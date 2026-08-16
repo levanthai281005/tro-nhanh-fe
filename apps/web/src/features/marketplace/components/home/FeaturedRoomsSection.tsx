@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { QuickFilterChips } from '@/features/marketplace/components/home/QuickFilterChips';
-import { RoomCard } from '@/features/marketplace/components/home/RoomCard';
+import { RoomCard } from '@/features/marketplace/components/RoomCard';
 import { useFeaturedListings } from '@/features/marketplace/hooks/useHomeData';
 
 const FEATURED_LIMIT = 4;
