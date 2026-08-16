@@ -1,4 +1,5 @@
 import type { ListingRecord, MarketplaceEntityFields } from '@/features/marketplace/types/listings';
+import type { ListingDetailLocation } from '@/features/marketplace/types/listingLocation';
 
 export interface ListingReview extends MarketplaceEntityFields {
   propertyId: string;
@@ -13,6 +14,7 @@ export interface ListingReview extends MarketplaceEntityFields {
 export interface ListingDetailData {
   record: ListingRecord;
   reviews: readonly ListingReview[];
+  location: ListingDetailLocation | null;
 }
 
 export interface ListingReport extends MarketplaceEntityFields {

@@ -1,4 +1,5 @@
 import type { ListingRecord, MarketplaceEntityFields } from '@/features/marketplace/types/listings';
+import type { ListingDetailLocation } from '@/features/marketplace/types/listingLocation';
 import type {
   AccessPolicy,
   RentalListing,
@@ -57,6 +58,7 @@ interface ListingSeed {
   status?: RentalListingStatus;
   expireAt?: string;
   boostExpireAt?: string | null;
+  location: ListingDetailLocation;
 }
 
 const LISTING_SEEDS: readonly ListingSeed[] = [
@@ -72,6 +74,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
     amenityIcons: ['wifi', 'ac', 'furniture'],
     boostExpireAt: ACTIVE_EXPIRY,
+    location: {
+      latitude: 10.773691,
+      longitude: 106.657368,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Vạn Hạnh Mall', distance: '950 m' }] },
+        { key: 'edu', places: [{ name: 'Đại học Bách khoa TP.HCM', distance: '550 m' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Trưng Vương', distance: '1,1 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Hòa Hưng', distance: '650 m' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000002',
@@ -84,6 +96,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 9_200_000,
     imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80',
     amenityIcons: ['parking', 'ac', 'furniture'],
+    location: {
+      latitude: 10.733157,
+      longitude: 106.707115,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Lotte Mart Quận 7', distance: '1,4 km' }] },
+        { key: 'edu', places: [{ name: 'RMIT University Vietnam', distance: '1,7 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện FV', distance: '2,1 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Tân Mỹ', distance: '850 m' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000003',
@@ -96,6 +118,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 3_000_000,
     imageUrl: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
     amenityIcons: ['wifi', 'loft', 'bath'],
+    location: {
+      latitude: 10.8475,
+      longitude: 106.7859,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Vincom Plaza Lê Văn Việt', distance: '450 m' }] },
+        { key: 'edu', places: [{ name: 'Đại học Giao thông Vận tải CS2', distance: '1,3 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Lê Văn Việt', distance: '1,1 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Hiệp Phú', distance: '500 m' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000004',
@@ -108,6 +140,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 5_800_000,
     imageUrl: 'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=800&q=80',
     amenityIcons: ['wifi', 'clock', 'parking'],
+    location: {
+      latitude: 10.7865,
+      longitude: 106.6824,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Chợ Nguyễn Văn Trỗi', distance: '700 m' }] },
+        { key: 'edu', places: [{ name: 'Trường THPT Lê Quý Đôn', distance: '1,5 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện An Sinh', distance: '1,0 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Bàn Cờ', distance: '1,2 km' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000005',
@@ -120,6 +162,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 1_800_000,
     imageUrl: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
     amenityIcons: ['wifi', 'parking'],
+    location: {
+      latitude: 10.8554,
+      longitude: 106.6273,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Co.opmart Nguyễn Ảnh Thủ', distance: '1,3 km' }] },
+        { key: 'edu', places: [{ name: 'Cao đẳng Điện lực TP.HCM', distance: '1,1 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Quận 12', distance: '2,4 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Cầu', distance: '900 m' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000006',
@@ -133,6 +185,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     imageUrl: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
     amenityIcons: ['wifi', 'ac', 'parking'],
     boostExpireAt: ACTIVE_EXPIRY,
+    location: {
+      latitude: 10.8044,
+      longitude: 106.7142,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Pearl Plaza', distance: '1,2 km' }] },
+        { key: 'edu', places: [{ name: 'Đại học HUTECH', distance: '550 m' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Bình Thạnh', distance: '1,8 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Văn Thánh', distance: '800 m' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000007',
@@ -145,6 +207,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 7_800_000,
     imageUrl: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
     amenityIcons: ['ac', 'bath', 'pets'],
+    location: {
+      latitude: 10.7961,
+      longitude: 106.6648,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Pico Plaza Cộng Hòa', distance: '1,7 km' }] },
+        { key: 'edu', places: [{ name: 'Đại học Tài chính - Marketing', distance: '1,6 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Thống Nhất', distance: '2,1 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Phạm Văn Hai', distance: '1,2 km' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000008',
@@ -157,6 +229,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 2_400_000,
     imageUrl: 'https://images.unsplash.com/photo-1489171078254-c3365d6e359f?w=800&q=80',
     amenityIcons: ['wifi', 'clock', 'bath'],
+    location: {
+      latitude: 10.8364,
+      longitude: 106.6674,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Emart Gò Vấp', distance: '1,1 km' }] },
+        { key: 'edu', places: [{ name: 'Đại học Công nghiệp TP.HCM', distance: '1,4 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Quân y 175', distance: '1,9 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Hạnh Thông Tây', distance: '650 m' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000009',
@@ -187,6 +269,40 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     accessOpenTime: '06:00',
     accessCloseTime: '23:00',
     contactPhone: '0938456789',
+    location: {
+      latitude: 10.8125,
+      longitude: 106.6653,
+      nearbyPlaces: [
+        {
+          key: 'shopping',
+          places: [
+            { name: 'Menas Mall', distance: '850 m' },
+            { name: 'Vincom Plaza Cộng Hòa', distance: '1,5 km' },
+          ],
+        },
+        {
+          key: 'edu',
+          places: [
+            { name: 'Học viện Hàng không Việt Nam', distance: '1,1 km' },
+            { name: 'Trường THPT Nguyễn Chí Thanh', distance: '700 m' },
+          ],
+        },
+        {
+          key: 'health',
+          places: [
+            { name: 'Bệnh viện Tân Bình', distance: '1,8 km' },
+            { name: 'Bệnh viện Hoàn Mỹ Sài Gòn', distance: '2,2 km' },
+          ],
+        },
+        {
+          key: 'food',
+          places: [
+            { name: 'Chợ Tân Sơn Nhất', distance: '900 m' },
+            { name: 'Chợ Phạm Văn Hai', distance: '2,3 km' },
+          ],
+        },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000010',
@@ -199,6 +315,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 3_900_000,
     imageUrl: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80',
     amenityIcons: ['loft', 'parking', 'bath'],
+    location: {
+      latitude: 10.8151,
+      longitude: 106.709,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Landmark 81', distance: '2,3 km' }] },
+        { key: 'edu', places: [{ name: 'Đại học Hồng Bàng CS Nguyễn Xí', distance: '700 m' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Ung bướu TP.HCM cơ sở 2', distance: '2,2 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Cây Quéo', distance: '1,4 km' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000011',
@@ -211,6 +337,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     price: 6_000_000,
     imageUrl: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
     amenityIcons: ['wifi', 'ac', 'parking'],
+    location: {
+      latitude: 10.8493,
+      longitude: 106.7704,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Vincom Plaza Thủ Đức', distance: '700 m' }] },
+        { key: 'edu', places: [{ name: 'Đại học Sư phạm Kỹ thuật TP.HCM', distance: '1,2 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện thành phố Thủ Đức', distance: '1,4 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Thủ Đức', distance: '1,0 km' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000012',
@@ -224,6 +360,16 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     imageUrl: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
     amenityIcons: ['wifi'],
     status: 'Hidden',
+    location: {
+      latitude: 10.7742,
+      longitude: 106.698,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Takashimaya Saigon Centre', distance: '1,1 km' }] },
+        { key: 'edu', places: [{ name: 'Đại học Khoa học Xã hội và Nhân văn', distance: '1,4 km' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Nhi Đồng 2', distance: '1,9 km' }] },
+        { key: 'food', places: [{ name: 'Chợ Bến Thành', distance: '1,2 km' }] },
+      ],
+    },
   },
   {
     id: '10000000-0000-4000-8000-000000000013',
@@ -237,8 +383,21 @@ const LISTING_SEEDS: readonly ListingSeed[] = [
     imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80',
     amenityIcons: ['wifi', 'ac'],
     expireAt: '2026-08-01T00:00:00.000Z',
+    location: {
+      latitude: 10.7752,
+      longitude: 106.7001,
+      nearbyPlaces: [
+        { key: 'shopping', places: [{ name: 'Saigon Centre', distance: '750 m' }] },
+        { key: 'edu', places: [{ name: 'Đại học Hoa Sen cơ sở Quang Trung', distance: '900 m' }] },
+        { key: 'health', places: [{ name: 'Bệnh viện Răng Hàm Mặt TP.HCM', distance: '1,5 km' }] },
+        { key: 'food', places: [{ name: 'Phố ẩm thực Bùi Viện', distance: '1,1 km' }] },
+      ],
+    },
   },
 ];
+
+export const MOCK_LISTING_LOCATIONS: Readonly<Record<string, ListingDetailLocation>> =
+  Object.fromEntries(LISTING_SEEDS.map((seed) => [seed.id, seed.location] as const));
 
 export const MOCK_LISTING_RECORDS: readonly ListingRecord[] = LISTING_SEEDS.map((seed, index) => {
   const fields = entityFields(seed.id, index + 2);

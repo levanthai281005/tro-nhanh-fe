@@ -1,4 +1,7 @@
-import { MOCK_LISTING_RECORDS } from '@/features/marketplace/constants/mockListings';
+import {
+  MOCK_LISTING_LOCATIONS,
+  MOCK_LISTING_RECORDS,
+} from '@/features/marketplace/constants/mockListings';
 import { MOCK_LISTING_REVIEWS } from '@/features/marketplace/constants/mockListingReviews';
 import type {
   ListingCardView,
@@ -78,6 +81,7 @@ export async function getPublicListingDetail(listingId: string): Promise<Listing
     reviews: record.listing.propertyId
       ? (MOCK_LISTING_REVIEWS[record.listing.propertyId] ?? [])
       : [],
+    location: MOCK_LISTING_LOCATIONS[record.listing.id] ?? null,
   };
 }
 
