@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { SearchResultsRoute } from '@/features/marketplace/components/search/SearchResultsRoute';
 
 export const metadata: Metadata = {
-  title: 'Tìm phòng | Trọ Nhanh',
+  title: 'Tìm phòng',
   description: 'Tìm phòng trọ, căn hộ dịch vụ và chỗ ở phù hợp trên Trọ Nhanh.',
 };
 

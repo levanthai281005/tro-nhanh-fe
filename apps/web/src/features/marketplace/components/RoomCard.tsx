@@ -46,6 +46,8 @@ export function RoomCard({ listing, variant }: RoomCardProps) {
   const router = useRouter();
   const openListing = () => router.push(`/phong/${listing.id}`);
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.currentTarget !== event.target) return;
+
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       openListing();

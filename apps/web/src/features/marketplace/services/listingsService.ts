@@ -18,12 +18,27 @@ function waitForMockRequest() {
 }
 
 function matchesKeyword(record: ListingRecord, keyword: string) {
-  const normalizedKeyword = normalizeVietnamese(keyword.trim());
+  const normalizedKeyword = normalizeSearchText(keyword);
   if (!normalizedKeyword) return true;
 
-  return [record.listing.title, record.listing.address, record.listing.district].some((value) =>
-    normalizeVietnamese(value).includes(normalizedKeyword),
+  const searchableText = normalizeSearchText(
+    [
+      record.listing.title,
+      record.listing.address,
+      record.listing.district,
+      // Mock listings currently store district/address only; include the city users see in the Hero hint.
+      'TP.HCM',
+    ].join(' '),
   );
+
+  return searchableText.includes(normalizedKeyword);
+}
+
+function normalizeSearchText(value: string) {
+  return normalizeVietnamese(value)
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function compareListings(

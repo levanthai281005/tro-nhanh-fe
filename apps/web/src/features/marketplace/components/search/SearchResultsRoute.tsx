@@ -21,7 +21,7 @@ export interface SearchResultsRouteProps {
 
 function readSearchParam(searchParams: Record<string, string | string[] | undefined>, key: string) {
   const value = searchParams[key];
-  return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
+  return (Array.isArray(value) ? (value[0] ?? '') : (value ?? '')).trim();
 }
 
 function isPriceRange(value: string): value is PriceRange {

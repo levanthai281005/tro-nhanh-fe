@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export interface SearchPageHeaderProps {
   total: number;
   isFiltered: boolean;
@@ -11,7 +13,9 @@ export function SearchPageHeader({ total, isFiltered }: SearchPageHeaderProps) {
           aria-label="Breadcrumb"
           className="mb-2.5 flex items-center gap-2 text-[13px] text-ink-muted"
         >
-          <span>Trang chủ</span>
+          <Link className="transition-colors hover:text-primary" href="/">
+            Trang chủ
+          </Link>
           <span aria-hidden="true">/</span>
           <span className="font-semibold text-ink">
             {isFiltered ? 'Kết quả tìm phòng' : 'Tất cả phòng'}
