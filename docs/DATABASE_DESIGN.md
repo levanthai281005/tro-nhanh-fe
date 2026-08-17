@@ -408,24 +408,24 @@ Hai bảng nối: **`listing_amenities`** `(listing_id, amenity_id)` và **`room
 
 **`properties`** — khu trọ
 
-| Cột                                                           | Kiểu           | Null | Ràng buộc / mặc định   | Ghi chú                           |
-| ------------------------------------------------------------- | -------------- | ---- | ---------------------- | --------------------------------- |
-| `seller_id`                                                   | `uuid`         | ✗    | FK `users`             | Trục cô lập dữ liệu (BR-007)      |
-| `name`                                                        | `varchar(120)` | ✗    | CHECK độ dài ≥ 2       |                                   |
-| `address`                                                     | `varchar(255)` | ✓    |                        |                                   |
-| `province_code` / `ward_code`                                 | `int`          | ✓    |                        | Xem §10.1                         |
-| `district`                                                    | `varchar(120)` | ✓    |                        | **Bắt buộc khi bật public**       |
-| `floor_count`                                                 | `smallint`     | ✓    |                        |                                   |
-| `note`                                                        | `text`         | ✓    |                        |                                   |
-| `bank_name`                                                   | `varchar(60)`  | ✓    |                        | 🔒 **Nhạy cảm**                   |
-| `bank_account_number`                                         | `varchar(20)`  | ✓    | CHECK chỉ chữ số       | 🔒 **Nhạy cảm**                   |
-| `bank_account_name`                                           | `varchar(120)` | ✓    | CHECK IN HOA không dấu | 🔒 Chuẩn VietQR bắt buộc          |
-| `is_public_profile_enabled`                                   | `boolean`      | ✗    | default `false`        | Opt-in (BR-024)                   |
-| `public_slug`                                                 | `varchar(160)` | ✓    | UNIQUE (partial)       | Tự sinh                           |
-| `avg_rating`                                                  | `numeric(2,1)` | ✓    |                        | **Dẫn xuất** — xem §8             |
-| `review_count`                                                | `int`          | ✗    | default 0              | **Dẫn xuất**                      |
-| `allow_occupant_meter_submission`                             | `boolean`      | ✗    | default `false`        | BR-033, đặt ở cấp khu có chủ đích |
-| `electricity_unit_price` / `water_unit_price` / `service_fee` | `bigint`       | ✓    |                        | ⚠️ **Đề xuất thêm — xem §10.2**   |
+| Cột                                                           | Kiểu           | Null | Ràng buộc / mặc định   | Ghi chú                                                                                |
+| ------------------------------------------------------------- | -------------- | ---- | ---------------------- | -------------------------------------------------------------------------------------- |
+| `seller_id`                                                   | `uuid`         | ✗    | FK `users`             | Trục cô lập dữ liệu (BR-007)                                                           |
+| `name`                                                        | `varchar(120)` | ✗    | CHECK độ dài ≥ 2       |                                                                                        |
+| `address`                                                     | `varchar(255)` | ✓    |                        |                                                                                        |
+| `province_code` / `ward_code`                                 | `int`          | ✓    |                        | Xem §10.1                                                                              |
+| `district`                                                    | `varchar(120)` | ✓    |                        | **Bắt buộc khi bật public**                                                            |
+| `floor_count`                                                 | `smallint`     | ✓    |                        |                                                                                        |
+| `note`                                                        | `text`         | ✓    |                        |                                                                                        |
+| `bank_name`                                                   | `varchar(16)`  | ✓    |                        | 🔒 **Nhạy cảm.** Lưu **mã** ngân hàng (`"MB"`, `"VCB"`), không lưu tên đầy đủ — §10.12 |
+| `bank_account_number`                                         | `varchar(20)`  | ✓    | CHECK chỉ chữ số       | 🔒 **Nhạy cảm**                                                                        |
+| `bank_account_name`                                           | `varchar(120)` | ✓    | CHECK IN HOA không dấu | 🔒 Chuẩn VietQR bắt buộc                                                               |
+| `is_public_profile_enabled`                                   | `boolean`      | ✗    | default `false`        | Opt-in (BR-024)                                                                        |
+| `public_slug`                                                 | `varchar(160)` | ✓    | UNIQUE (partial)       | Tự sinh                                                                                |
+| `avg_rating`                                                  | `numeric(2,1)` | ✓    |                        | **Dẫn xuất** — xem §8                                                                  |
+| `review_count`                                                | `int`          | ✗    | default 0              | **Dẫn xuất**                                                                           |
+| `allow_occupant_meter_submission`                             | `boolean`      | ✗    | default `false`        | BR-033, đặt ở cấp khu có chủ đích                                                      |
+| `electricity_unit_price` / `water_unit_price` / `service_fee` | `bigint`       | ✓    |                        | ⚠️ **Đề xuất thêm — xem §10.2**                                                        |
 
 > 🔒 Ba cột ngân hàng khiến bảng này **không bao giờ được `SELECT *` ra API công khai**. Xem §9.
 
@@ -817,7 +817,7 @@ làm khóa lọc. Lọc theo mã, hiển thị theo tên. Giữ tên `district` 
 
 **Cần chốt:** đổi tên hay giữ? Nếu giữ, ghi rõ trong tài liệu rằng `district` = phường/xã.
 
-### 10.2 ⚠️ Đơn giá điện/nước/dịch vụ lưu ở đâu?
+### 10.2 ✅ ĐÃ CHỐT — Đơn giá điện/nước/dịch vụ lưu ở đâu
 
 `DATA_ENTITIES.md` **không có** cột đơn giá trên `properties` lẫn `rooms`; chỉ có
 `utility_readings.unit_price` cho từng lần ghi. Nhưng giao diện cần một **giá mặc định** để
@@ -834,8 +834,10 @@ Tầng 3 là bắt buộc: đổi giá điện tháng 8 không được phép l�
 > **Cảnh báo `null` vs `0`:** `null` = "theo giá khu", `0` = "miễn phí". Hai ý khác nhau; gộp
 > lại là cách chắc chắn nhất để hóa đơn ra sai số. Frontend đã xử lý đúng phân biệt này.
 
-**Cần chốt:** có chấp nhận ba tầng không, và tên cột thống nhất (`service_fee` hay
-`service_price`?).
+> **Đã chốt (chủ dự án duyệt):** dùng ba tầng như trên. Frontend đã hiện thực hóa ở màn B7
+> — `Property` mang ba cột đơn giá mặc định, `Room` mang ba cột nullable đè lên.
+> **Còn hở:** tên cột chưa thống nhất giữa `service_fee` và `service_price`; BE chọn một
+> và báo lại để frontend đổi theo.
 
 ### 10.3 `occupancies.is_active` trùng với `end_date`
 
@@ -905,6 +907,19 @@ nhẹ nhưng số hiển thị trễ.
 
 **Đề xuất thêm `moderation_logs`:** `actor_user_id` · `action` · `target_type` · `target_id` ·
 `reason` · `metadata jsonb` · `created_at`. **Chỉ ghi thêm, không sửa, không xóa.**
+
+### 10.12 ✅ ĐÃ CHỐT — `bank_name` lưu mã ngân hàng, không lưu tên
+
+Chuỗi VietQR chuẩn EMVCo bắt buộc có **mã BIN 6 chữ số** của ngân hàng thụ hưởng. Nếu cột này
+là text tự do, chủ trọ gõ `"MB"`, `"mbbank"`, `"Ngân hàng Quân Đội"` đều lưu thành công mà
+**không giá trị nào sinh được QR** — và chỗ duy nhất phát hiện ra là khi người ở mở hóa đơn và
+không thấy mã nào.
+
+**Chốt:** `bank_name` lưu **mã** (`"MB"`, `"VCB"`, …). Bảng mã ↔ BIN ↔ tên hiển thị nằm ở
+`packages/constants/src/vn/banks.ts` phía frontend; backend chỉ cần lưu và trả lại nguyên mã.
+
+Tên cột `bank_name` giờ hơi sai nghĩa (nó chứa _code_ chứ không phải _name_). Đổi thành
+`bank_code` sẽ đúng hơn — **BE quyết**, frontend đổi theo.
 
 ### 10.11 Câu hỏi nhỏ hơn
 
