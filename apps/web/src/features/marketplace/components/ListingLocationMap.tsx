@@ -9,6 +9,8 @@ export interface ListingLocationMapProps {
   markerLabel?: string;
   zoom?: number;
   height?: number;
+  /** Truyền vào thì bản đồ cho chọn toạ độ (bấm hoặc kéo ghim); bỏ trống là chỉ xem. */
+  onPick?: (latitude: number, longitude: number) => void;
 }
 
 const DEFAULT_MAP_HEIGHT = 220;
@@ -55,6 +57,7 @@ export function ListingLocationMap({
   markerLabel,
   zoom,
   height,
+  onPick,
 }: ListingLocationMapProps) {
   if (!hasValidListingCoordinates(latitude, longitude)) return null;
 
@@ -72,6 +75,7 @@ export function ListingLocationMap({
         latitude={latitude}
         longitude={longitude}
         markerLabel={markerLabel}
+        onPick={onPick}
         zoom={normalizeZoom(zoom)}
       />
     </div>
