@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 // Leaflet needs these engine styles to position its panes and OpenStreetMap tiles; Tailwind cannot replace them.
 import 'leaflet/dist/leaflet.css';
@@ -66,6 +66,41 @@ function MapClickHandler({ onPick }: { onPick: (latitude: number, longitude: num
   return null;
 }
 
+/** Sai số bỏ qua khi so hai toạ độ — đủ nhỏ để không lẫn hai vị trí khác nhau. */
+const COORDINATE_EPSILON = 1e-7;
+
+/**
+ * Dời khung nhìn khi toạ độ đổi **từ bên ngoài** bản đồ, ví dụ nút "Lấy vị trí hiện tại".
+ *
+ * `MapContainer` chỉ đọc `center` lúc gắn lần đầu; đổi prop sau đó không làm bản đồ dời, nên
+ * ghim nhảy ra ngoài khung và trông như không có gì xảy ra.
+ *
+ * Chỉ dời khi vị trí mới khác chỗ bản đồ đang nhìn: bấm chọn một điểm ngay trên bản đồ thì
+ * điểm đó vốn đã trong tầm mắt, dời nữa sẽ giật khung một cách vô cớ.
+ */
+function MapViewSync({ latitude, longitude }: { latitude: number; longitude: number }) {
+  const map = useMap();
+  const lastSyncedRef = useRef<[number, number]>([latitude, longitude]);
+
+  useEffect(() => {
+    const [lastLatitude, lastLongitude] = lastSyncedRef.current;
+    const isSamePoint =
+      Math.abs(lastLatitude - latitude) < COORDINATE_EPSILON &&
+      Math.abs(lastLongitude - longitude) < COORDINATE_EPSILON;
+
+    if (isSamePoint) return;
+
+    lastSyncedRef.current = [latitude, longitude];
+
+    // Điểm mới đã nằm trong khung thì người dùng vẫn thấy ghim — không cần dời.
+    if (map.getBounds().contains([latitude, longitude])) return;
+
+    map.setView([latitude, longitude], map.getZoom(), { animate: true });
+  }, [latitude, longitude, map]);
+
+  return null;
+}
+
 /**
  * Private Leaflet adapter. Keep all provider-specific imports and lifecycle behavior here.
  */
@@ -90,6 +125,7 @@ export function LeafletMap({
       zoomControl={isPickable}
     >
       <MapSizeInvalidator />
+      <MapViewSync latitude={latitude} longitude={longitude} />
       <TileLayer attribution={OSM_ATTRIBUTION} maxZoom={19} url={OSM_TILE_URL} />
       {onPick ? <MapClickHandler onPick={onPick} /> : null}
       <Marker
