@@ -3,7 +3,7 @@
 import { loadVnWards, VN_PROVINCES, type VnWard } from '@tronhanh/constants';
 import { useEffect, useMemo, useState } from 'react';
 import { AppSelect, type SelectOption } from '@/components/ui/AppSelect';
-import { FieldBox } from '@/features/marketplace/components/post-listing/FormField';
+import { FieldBox } from '@/components/ui/FormField';
 
 /**
  * Chọn khu vực theo mô hình hành chính 2 cấp (tỉnh/thành → phường/xã, áp dụng từ 01/07/2025;

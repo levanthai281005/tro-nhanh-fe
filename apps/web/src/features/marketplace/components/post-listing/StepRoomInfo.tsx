@@ -2,11 +2,7 @@
 
 import { useFormContext } from 'react-hook-form';
 import { AMENITY_OPTIONS } from '@/features/marketplace/constants/amenities';
-import {
-  FormField,
-  inputClassName,
-  inputErrorClassName,
-} from '@/features/marketplace/components/post-listing/FormField';
+import { FormField, inputClassName, inputErrorClassName } from '@/components/ui/FormField';
 import type { AccessPolicy } from '@/features/marketplace/types/savedListings';
 import type { PostListingFormValues } from '@/features/marketplace/types/postListing';
 import { cn } from '@/utils/cn';

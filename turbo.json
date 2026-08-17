@@ -18,6 +18,7 @@
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
-    }
+    },
+    "test": {}
   }
 }

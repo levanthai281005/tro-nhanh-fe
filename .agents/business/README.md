@@ -7,9 +7,9 @@ Nguồn chân lý nghiệp vụ của dự án Trọ Nhanh. Mỗi file phụ tr�
 
 | Bạn đang làm | Đọc |
 |---|---|
-| Mới vào dự án, chưa nắm gì | `GLOSSARY.md` → `PRODUCT_OVERVIEW.md` → `ARCHITECTURE_AND_SHELLS.md` |
+| Mới vào dự án, chưa nắm gì | `GLOSSARY.md` → `PRODUCT_OVERVIEW.md` → `SURFACES_AND_MODES.md` |
 | Tạo file mới, không biết đặt ở đâu | `ARCHITECTURE_AND_SHELLS.md`, `FEATURE_MODULES.md` |
-| Dựng navigation, ẩn/hiện theo quyền | `ROLES_AND_IDENTITY.md`, `ACTORS_AND_RBAC.md` |
+| Dựng navigation, ẩn/hiện theo quyền | **`SURFACES_AND_MODES.md`**, `ROLES_AND_IDENTITY.md`, `ACTORS_AND_RBAC.md` |
 | Làm màn hình trong `app/(workspace)` | `ACCESS_GATING.md`, `SCREENS_WORKSPACE.md` |
 | Làm màn hình trong `app/(public)` | `SCREENS_PUBLIC.md` |
 | Làm màn hình trong `app/(residency)` hoặc app mobile | `SCREENS_RESIDENCY.md`, `ACCESS_GATING.md` |
@@ -30,6 +30,8 @@ Nguồn chân lý nghiệp vụ của dự án Trọ Nhanh. Mỗi file phụ tr�
 - `FEATURE_MODULES.md` — 20 module, ánh xạ sang thư mục feature
 
 **Định danh và quyền**
+- `SURFACES_AND_MODES.md` — **ba Surface, Mode, Capability; bảng quyết định vào được đâu.**
+  Được thi hành bằng code ở `packages/access` — sửa luật thì sửa file này trước
 - `ROLES_AND_IDENTITY.md` — role cộng dồn, ba tầng định danh, JWT
 - `ACTORS_AND_RBAC.md` — 5 actor, ma trận quyền, pipeline guard
 - `ACCESS_GATING.md` — 4 trạng thái Workspace, luồng mở Workspace

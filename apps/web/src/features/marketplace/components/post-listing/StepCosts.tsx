@@ -4,11 +4,7 @@ import { Plus, X } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { BoostUpgradeBlock } from '@/features/marketplace/components/post-listing/BoostUpgradeBlock';
-import {
-  FormField,
-  inputClassName,
-  inputErrorClassName,
-} from '@/features/marketplace/components/post-listing/FormField';
+import { FormField, inputClassName, inputErrorClassName } from '@/components/ui/FormField';
 import type {
   PostListingFormValues,
   UtilityPricingMode,

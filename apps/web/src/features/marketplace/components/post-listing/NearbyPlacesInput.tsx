@@ -3,7 +3,7 @@
 import { ChevronDown, Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { NEARBY_CATEGORY_META } from '@/features/marketplace/constants/nearbyCategories';
-import { inputClassName } from '@/features/marketplace/components/post-listing/FormField';
+import { inputClassName } from '@/components/ui/FormField';
 import type { ListingNearbyCategoryKey } from '@/features/marketplace/types/listingLocation';
 import type { NearbyPlaceEntry } from '@/features/marketplace/types/postListing';
 import { createLocalId } from '@/features/marketplace/utils/localId';
