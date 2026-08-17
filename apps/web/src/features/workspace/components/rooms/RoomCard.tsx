@@ -3,6 +3,7 @@
 import { Megaphone, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import type { RoomListItem } from '@/features/workspace/types/room';
+import { getPrimaryOccupant } from '@/features/workspace/utils/roomOccupants';
 import { formatVnd } from '@/utils/formatVnd';
 
 /**
@@ -19,6 +20,8 @@ export function RoomCard({
   room: RoomListItem;
   onSelect: (room: RoomListItem) => void;
 }) {
+  const primaryOccupant = getPrimaryOccupant(room);
+
   return (
     <button
       className="flex flex-col gap-3 rounded-md border-[1.5px] border-line bg-surface p-[18px] text-left shadow-sm transition-colors hover:border-sand"
@@ -38,12 +41,17 @@ export function RoomCard({
         <span>
           Giá thuê <strong className="text-sm text-primary">{formatVnd(room.price)}</strong>
         </span>
-        {room.occupant ? (
+        {primaryOccupant ? (
           <span className="mt-0.5 flex items-center gap-1.5 font-semibold text-ink">
             <Users aria-hidden="true" className="size-[13px] shrink-0 text-primary" />
-            <span className="truncate">
-              {room.occupant.fullName} ({room.occupant.phoneNumber})
-            </span>
+            <span className="truncate">{primaryOccupant.fullName}</span>
+            {/* Số người còn lại, không phải "occupantCount" của một bản ghi: mỗi người ở là
+                một Occupancy riêng (Module 7). */}
+            {room.occupants.length > 1 ? (
+              <span className="shrink-0 font-medium text-ink-muted">
+                +{room.occupants.length - 1} người
+              </span>
+            ) : null}
           </span>
         ) : null}
       </div>

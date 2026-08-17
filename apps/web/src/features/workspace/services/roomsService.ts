@@ -79,7 +79,7 @@ export async function createRoom(input: RoomWriteInput): Promise<RoomListItem> {
     servicePrice: input.servicePrice,
     createdAt: timestamp,
     updatedAt: timestamp,
-    occupant: null,
+    occupants: [],
     hasActiveListing: false,
     hasActiveContract: false,
   };

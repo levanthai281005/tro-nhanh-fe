@@ -1,13 +1,13 @@
 'use client';
 
-import { roomSchema, ROOM_STATUS_VALUES, type RoomStatus } from '@tronhanh/schemas';
+import { roomSchema, type RoomStatus } from '@tronhanh/schemas';
 import { useState } from 'react';
-import { AppSelect } from '@/components/ui/AppSelect';
 import { Button } from '@/components/ui/Button';
 import { FormField, inputClassName } from '@/components/ui/FormField';
 import { ModalShell } from '@/components/ui/ModalShell';
+import { NumberField } from '@/components/ui/NumberField';
 import { WriteGuardButton } from '@/features/session/components/WriteGuardButton';
-import { ROOM_STATUS_LABELS } from '@/features/workspace/constants/roomStatus';
+import { RoomStatusPicker } from '@/features/workspace/components/rooms/RoomStatusPicker';
 import type { RoomWriteInput } from '@/features/workspace/services/roomsService';
 import type { RoomFormValues, RoomListItem } from '@/features/workspace/types/room';
 
@@ -28,12 +28,9 @@ interface RoomFormDialogProps {
   onSubmit: (input: RoomWriteInput) => void;
 }
 
-const STATUS_OPTIONS = ROOM_STATUS_VALUES.map((value) => ({
-  value,
-  label: ROOM_STATUS_LABELS[value],
-}));
+/** Lỗi theo từng ô — đặt ngay dưới ô sai thay vì dồn lên một banner ở đầu form. */
+type FieldErrors = Partial<Record<'roomCode' | 'floor' | 'area' | 'price', string>>;
 
-/** Ô số cho phép người dùng gõ "3.200.000" — chỉ giữ chữ số khi đọc ra. */
 function toNumber(raw: string): number {
   return Number(raw.replace(/\D/g, ''));
 }
@@ -77,18 +74,27 @@ export function RoomFormDialog({
   onSubmit,
 }: RoomFormDialogProps) {
   const [values, setValues] = useState<RoomFormValues>(() => toFormValues(propertyId, room));
-  const [validationError, setValidationError] = useState<string | null>(null);
-
-  // Lỗi nhập liệu tại chỗ được ưu tiên: nó nói về thứ người dùng vừa gõ, còn lỗi mutation là
-  // của lần gửi trước đó.
-  const error = validationError ?? submitError;
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const setField = <TKey extends keyof RoomFormValues>(key: TKey, value: RoomFormValues[TKey]) => {
     setValues((current) => ({ ...current, [key]: value }));
+    // Xóa lỗi của đúng ô vừa sửa: giữ lại thì người dùng sửa xong vẫn thấy chữ đỏ và tưởng
+    // mình chưa sửa đúng.
+    setFieldErrors((current) => ({ ...current, [key]: undefined }));
   };
 
   const handleSubmit = () => {
-    setValidationError(null);
+    /*
+     * Ô để trống ≠ số 0, và schema thực thể không phân biệt được hai thứ đó.
+     *
+     * `roomPriceSchema` cố ý cho `price ≥ 0` vì phòng cho người nhà ở nhờ là dữ liệu hợp lệ.
+     * Nhưng `Number('')` ra `0`, nên bỏ trống ô giá sẽ **lặng lẽ** lưu phòng giá 0 đ/tháng —
+     * đúng thứ chảy thẳng xuống hóa đơn. Ràng buộc "phải khai" thuộc về form, không thuộc về
+     * thực thể, nên kiểm ở đây.
+     */
+    const blankFieldErrors: FieldErrors = {};
+    if (values.area.trim() === '') blankFieldErrors.area = 'Vui lòng nhập diện tích';
+    if (values.price.trim() === '') blankFieldErrors.price = 'Vui lòng nhập giá thuê';
 
     const parsed = roomSchema.safeParse({
       propertyId,
@@ -103,11 +109,29 @@ export function RoomFormDialog({
       servicePrice: values.hasCustomPricing ? toOptionalNumber(values.servicePrice) : null,
     });
 
-    if (!parsed.success) {
-      setValidationError(parsed.error.issues[0]?.message ?? 'Dữ liệu chưa hợp lệ.');
+    const schemaFieldErrors: FieldErrors = parsed.success
+      ? {}
+      : (() => {
+          const flattened = parsed.error.flatten().fieldErrors;
+          return {
+            roomCode: flattened.roomCode?.[0],
+            floor: flattened.floor?.[0],
+            area: flattened.area?.[0],
+            price: flattened.price?.[0],
+          };
+        })();
+
+    // Gộp cả hai nguồn rồi mới hiện, thay vì chặn sớm ở nhóm đầu: hiện lần lượt thì người
+    // dùng sửa một lỗi, bấm lại, lại gặp lỗi mới — mỗi vòng một lần bấm.
+    const merged: FieldErrors = { ...schemaFieldErrors, ...blankFieldErrors };
+    if (Object.values(merged).some(Boolean)) {
+      setFieldErrors(merged);
       return;
     }
 
+    if (!parsed.success) return;
+
+    setFieldErrors({});
     onSubmit({ ...parsed.data, note: parsed.data.note ?? '' });
   };
 
@@ -131,77 +155,76 @@ export function RoomFormDialog({
       onClose={onClose}
       title={room ? `Sửa phòng ${room.roomCode}` : 'Thêm phòng mới'}
     >
-      <div className="flex flex-col gap-3">
-        <p className="m-0 text-[13px] text-ink-muted">
-          Khu trọ: <strong className="text-ink">{propertyName}</strong>
-        </p>
-
-        {error ? (
+      <div className="flex flex-col gap-6">
+        {submitError ? (
           <p className="m-0 rounded-sm border border-error bg-error-soft px-3.5 py-2.5 text-[13px] font-semibold text-error">
-            {error}
+            {submitError}
           </p>
         ) : null}
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <FormField isRequired label="Mã phòng">
-            <input
-              className={inputClassName}
-              onChange={(event) => setField('roomCode', event.target.value)}
-              placeholder="VD: P101"
-              value={values.roomCode}
-            />
-          </FormField>
+        <FormSection
+          description={`Phòng sẽ được thêm vào khu ${propertyName}.`}
+          title="Thông tin phòng"
+        >
+          <div className="grid gap-3.5 sm:grid-cols-[1.4fr_1fr]">
+            <FormField error={fieldErrors.roomCode} isRequired label="Mã phòng">
+              <input
+                autoFocus
+                className={inputClassName}
+                onChange={(event) => setField('roomCode', event.target.value)}
+                placeholder="VD: P101"
+                value={values.roomCode}
+              />
+            </FormField>
 
-          <FormField label="Số tầng">
-            <input
-              className={inputClassName}
-              inputMode="numeric"
-              onChange={(event) => setField('floor', event.target.value)}
-              placeholder="VD: 1"
-              value={values.floor}
-            />
-          </FormField>
+            <FormField error={fieldErrors.floor} label="Tầng">
+              <NumberField
+                hasError={Boolean(fieldErrors.floor)}
+                onValueChange={(value) => setField('floor', value)}
+                placeholder="1"
+                value={values.floor}
+              />
+            </FormField>
 
-          <FormField isRequired label="Diện tích (m²)">
-            <input
-              className={inputClassName}
-              inputMode="numeric"
-              onChange={(event) => setField('area', event.target.value)}
-              placeholder="VD: 25"
-              value={values.area}
-            />
-          </FormField>
+            <FormField error={fieldErrors.area} isRequired label="Diện tích">
+              <NumberField
+                hasError={Boolean(fieldErrors.area)}
+                onValueChange={(value) => setField('area', value)}
+                placeholder="25"
+                suffix="m²"
+                value={values.area}
+              />
+            </FormField>
 
-          <FormField isRequired label="Giá thuê (đ/tháng)">
-            <input
-              className={inputClassName}
-              inputMode="numeric"
-              onChange={(event) => setField('price', event.target.value)}
-              placeholder="VD: 3.200.000"
-              value={values.price}
-            />
-          </FormField>
-        </div>
-
-        <FormField label="Trạng thái">
-          <div className="rounded-sm border-[1.5px] border-sand/55 bg-canvas px-3.5 py-2.5">
-            <AppSelect
-              onChange={(value) => setField('status', value as RoomStatus)}
-              options={STATUS_OPTIONS}
-              value={values.status}
-            />
+            <FormField error={fieldErrors.price} isRequired label="Giá thuê">
+              <NumberField
+                hasError={Boolean(fieldErrors.price)}
+                onValueChange={(value) => setField('price', value)}
+                placeholder="3.200.000"
+                suffix="đ/tháng"
+                value={values.price}
+                withThousandSeparator
+              />
+            </FormField>
           </div>
-        </FormField>
+        </FormSection>
+
+        <FormSection title="Trạng thái">
+          <RoomStatusPicker
+            onChange={(status: RoomStatus) => setField('status', status)}
+            value={values.status}
+          />
+        </FormSection>
 
         {/* Đơn giá riêng — mặc định TẮT. Giá điện nước không cố định một mức cho cả khu: chủ
             trọ có thể thu 3.500đ/kWh với hợp đồng cũ và 3.700đ/kWh với phòng ký mới. Nhưng
             phần lớn phòng dùng chung giá khu, nên bắt nhập cho từng phòng sẽ khiến người dùng
             điền số bừa. */}
-        <div className="border-t border-line pt-3">
-          <label className="flex cursor-pointer items-start gap-2.5">
+        <FormSection title="Đơn giá & ghi chú">
+          <label className="flex cursor-pointer items-start gap-2.5 rounded-sm border border-line bg-canvas px-3.5 py-3">
             <input
               checked={values.hasCustomPricing}
-              className="mt-[3px] size-4 accent-primary"
+              className="mt-[3px] size-4 shrink-0 accent-primary"
               onChange={(event) => setField('hasCustomPricing', event.target.checked)}
               type="checkbox"
             />
@@ -209,56 +232,88 @@ export function RoomFormDialog({
               <span className="block text-[13.5px] font-bold text-ink">
                 Phòng này có đơn giá riêng
               </span>
-              <span className="block text-xs leading-snug text-ink-muted">
-                Bỏ trống thì phòng dùng đơn giá của khu trọ. Bật khi phòng này ký hợp đồng ở mức giá
+              <span className="mt-0.5 block text-xs leading-snug text-ink-muted">
+                Để tắt thì phòng dùng đơn giá của khu trọ. Bật khi phòng này ký hợp đồng ở mức giá
                 khác các phòng còn lại.
               </span>
             </span>
           </label>
 
           {values.hasCustomPricing ? (
-            <div className="mt-3 grid gap-3 md:grid-cols-3">
-              <FormField label="Điện (đ/kWh)">
-                <input
-                  className={inputClassName}
-                  inputMode="numeric"
-                  onChange={(event) => setField('electricityPrice', event.target.value)}
+            <div className="grid gap-3.5 sm:grid-cols-3">
+              <FormField label="Tiền điện">
+                <NumberField
+                  onValueChange={(value) => setField('electricityPrice', value)}
                   placeholder="Theo khu"
+                  suffix="đ/kWh"
                   value={values.electricityPrice}
+                  withThousandSeparator
                 />
               </FormField>
-              <FormField label="Nước (đ/m³)">
-                <input
-                  className={inputClassName}
-                  inputMode="numeric"
-                  onChange={(event) => setField('waterPrice', event.target.value)}
+              <FormField label="Tiền nước">
+                <NumberField
+                  onValueChange={(value) => setField('waterPrice', value)}
                   placeholder="Theo khu"
+                  suffix="đ/m³"
                   value={values.waterPrice}
+                  withThousandSeparator
                 />
               </FormField>
-              <FormField label="Dịch vụ (đ/tháng)">
-                <input
-                  className={inputClassName}
-                  inputMode="numeric"
-                  onChange={(event) => setField('servicePrice', event.target.value)}
+              <FormField label="Phí dịch vụ">
+                <NumberField
+                  onValueChange={(value) => setField('servicePrice', value)}
                   placeholder="Theo khu"
+                  suffix="đ/tháng"
                   value={values.servicePrice}
+                  withThousandSeparator
                 />
               </FormField>
             </div>
           ) : null}
-        </div>
 
-        <FormField label="Ghi chú nội bộ">
-          <textarea
-            className={inputClassName}
-            onChange={(event) => setField('note', event.target.value)}
-            placeholder="Ghi chú về phòng này"
-            rows={3}
-            value={values.note}
-          />
-        </FormField>
+          <FormField
+            hint="Chỉ mình bạn thấy — người thuê không đọc được ghi chú này."
+            label="Ghi chú nội bộ"
+          >
+            <textarea
+              className={inputClassName}
+              onChange={(event) => setField('note', event.target.value)}
+              placeholder="VD: Vừa sơn lại, đón khách được ngay"
+              rows={2}
+              value={values.note}
+            />
+          </FormField>
+        </FormSection>
       </div>
     </ModalShell>
+  );
+}
+
+/**
+ * Một nhóm trường có tiêu đề.
+ *
+ * Bản trước là một cột phẳng mười ô nhập liền nhau, không có chỗ nào cho mắt nghỉ nên người
+ * dùng phải đọc từng nhãn mới biết form dài tới đâu. Chia nhóm cho thấy ngay hình dạng của
+ * việc phải làm.
+ */
+function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="flex flex-col gap-3">
+      <div>
+        <h3 className="m-0 text-xs font-bold uppercase tracking-[0.05em] text-ink-muted">
+          {title}
+        </h3>
+        {description ? <p className="m-0 mt-1 text-[13px] text-ink-muted">{description}</p> : null}
+      </div>
+      {children}
+    </section>
   );
 }

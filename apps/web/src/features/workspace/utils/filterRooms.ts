@@ -13,7 +13,13 @@ export function filterAndSortRooms(
       !normalizedKeyword ||
       room.roomCode.toLowerCase().includes(normalizedKeyword) ||
       (room.note?.toLowerCase().includes(normalizedKeyword) ?? false) ||
-      (room.occupant?.fullName.toLowerCase().includes(normalizedKeyword) ?? false);
+      // Tìm theo **mọi** người ở, không chỉ người đại diện: chủ trọ hay nhớ tên bạn cùng
+      // phòng chứ không nhớ ai là người đứng tên hợp đồng.
+      room.occupants.some(
+        (occupant) =>
+          occupant.fullName.toLowerCase().includes(normalizedKeyword) ||
+          occupant.phoneNumber.includes(normalizedKeyword),
+      );
 
     return matchesKeyword && (filter === 'all' || room.status === filter);
   });

@@ -135,6 +135,13 @@ ngày — cần lâu hơn thì chia nhỏ.
         nút "Điện nước"/"Hóa đơn" trên thẻ phòng: B12 chưa có, không để nút chết.
       - `AreaSelect` + `FormField` nâng từ `features/marketplace/post-listing/` lên
         `components/ui/` vì B6 cũng cần (cấm import chéo feature).
+      - **Một `Room` có NHIỀU `Occupancy` Active đồng thời**, `Contract` chỉ gắn **một** người
+        đại diện (Module 7 + BR-006). Không mô hình hóa thành "một người ở kèm `occupantCount`"
+        như prototype: mỗi người là một bản ghi riêng, có SĐT riêng và `linkStatus` riêng
+        (BR-029). Thẻ phòng hiện người đại diện + "+N người"; drawer liệt kê đủ.
+      - Form: `NumberField` (`components/ui`) tự chấm phân cách hàng nghìn + đơn vị chìm;
+        trạng thái phòng dùng chip màu thay `<select>` vì chỉ có 4 giá trị và màu là thứ nhận
+        diện ở lưới; lỗi hiện ngay dưới từng ô và **gộp mọi lỗi trong một lần bấm**.
 
 ### Đang làm
 
@@ -229,6 +236,12 @@ duyệt.** Thêm phòng ở B8 rồi quay lại B6 vẫn thấy số cũ, vì `s
 liệu server vừa ghi đè là còn tươi nên không refetch. Hook của workspace đặt `staleTime: 0`
 để refetch khi mount hòa giải lại; bỏ khi nối API thật. Cạm bẫy này áp cho **mọi** feature
 đang chạy mock có mutation.
+
+**Ô số để trống ≠ số 0, mà schema thực thể không phân biệt được.** `roomPriceSchema` cố ý cho
+`price ≥ 0` (phòng cho người nhà ở nhờ là dữ liệu thật), nhưng `Number('')` ra `0` nên bỏ
+trống ô giá thuê **lặng lẽ** lưu phòng giá 0 đ/tháng — sai số chảy thẳng xuống hóa đơn. Ràng
+buộc "phải khai" thuộc về **form**, không thuộc thực thể; kiểm chuỗi rỗng trước khi parse.
+Cùng một cái bẫy với `electricityPrice: null` (theo giá khu) so với `0` (miễn phí).
 
 **Banner lỗi đặt ở trang nền sẽ nằm SAU lớp phủ modal.** Bấm Lưu bị trùng mã phòng thì dialog
 đứng im không rõ lý do — lỗi có render, chỉ là người dùng không thấy. Lỗi của thao tác trong

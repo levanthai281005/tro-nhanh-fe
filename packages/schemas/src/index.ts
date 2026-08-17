@@ -22,6 +22,14 @@ export {
 } from './property';
 
 export {
+  occupancyLinkStatusSchema,
+  OCCUPANCY_LINK_STATUS_VALUES,
+  occupantNameSchema,
+  occupantPhoneSchema,
+  type OccupancyLinkStatus,
+} from './occupancy';
+
+export {
   ALLOWED_ROOM_STATUS_TRANSITIONS,
   canTransitionRoomStatus,
   ROOM_STATUS_VALUES,
