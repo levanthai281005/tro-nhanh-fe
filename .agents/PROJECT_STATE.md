@@ -143,11 +143,26 @@ ngày — cần lâu hơn thì chia nhỏ.
         trạng thái phòng dùng chip màu thay `<select>` vì chỉ có 4 giá trị và màu là thứ nhận
         diện ở lưới; lỗi hiện ngay dưới từng ô và **gộp mọi lỗi trong một lần bấm**.
 
+- [x] **B7 chi tiết khu trọ** — `feat/port-property-detail`, route `/chu-tro/khu-tro/[id]`
+      - Năm khối **lưu độc lập**: thông tin khu, đơn giá mặc định, nhận tiền + VietQR, hồ sơ
+        công khai (BR-024), vùng nguy hiểm (BR-011). Một nút Lưu chung buộc người dùng tin
+        rằng bốn khối kia không bị đụng tới.
+      - **VietQR vẽ tại máy người dùng** bằng `qrcode`, không gọi `img.vietqr.io` — quicklink
+        của VietQR nhận số tài khoản qua URL query, tức là mỗi lần render là một lần gửi thông
+        tin tài chính của chủ trọ sang bên thứ ba. `packages/utils/src/vietqr.ts` (chuỗi
+        EMVCo) + `packages/constants/src/vn/banks.ts` (28 ngân hàng + mã BIN), **22 test**.
+      - Ô ngân hàng **bắt buộc là dropdown**: chuỗi EMVCo cần mã BIN 6 số. Text tự do lưu vẫn
+        thành công nhưng QR chết im lặng.
+      - Tên chủ TK **tự chuyển IN HOA không dấu khi gõ** thay vì báo lỗi — đó là ràng buộc kỹ
+        thuật của VietQR, không phải lỗi người dùng.
+      - Hai quyết định đã chốt, ghi vào `docs/DATABASE_DESIGN.md` §10.2 và §10.12: đơn giá
+        theo **ba tầng** (khu → phòng nullable → chốt cứng vào `UtilityReading`), và
+        `bank_name` lưu **mã** ngân hàng chứ không lưu tên.
+
 ### Đang làm
 
-- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B7 (chi tiết khu + nhận tiền +
-      bật public) vì B6 đang cảnh báo "Chưa có thông tin nhận tiền" mà chưa có chỗ nhập, rồi
-      B3 (dashboard), B9/B10 (chi tiết phòng + người ở).
+- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B3 (dashboard), B9/B10 (chi tiết
+      phòng + người ở), B11 hợp đồng, B12 hóa đơn.
 - [ ] Nút **"Tạo tin từ phòng"** (điểm nối Room → RentalListing) — chưa làm: B5 chưa đọc
       `?roomId=` để prefill. Badge "Có tin đang chạy" thì đã có. Làm thành nhánh riêng chạm
       cả hai feature.
@@ -230,6 +245,14 @@ bản đồ dời, ghim văng ra ngoài khung và trông như không có gì x�
 **Chỉ một file được chạm thư viện bản đồ.** Mọi nơi đi qua `ListingLocationMap`; phần Leaflet
 nằm sau `LeafletMap`. Cùng nguyên tắc với `loadVnWards()` cho dữ liệu hành chính — đổi nhà
 cung cấp sau này chỉ sửa một file.
+
+**Sau mutation, `invalidate` để lộ khoảng một giây hai chỗ nói ngược nhau.** Thông báo "đã
+lưu" hiện ngay còn dữ liệu trên màn thì đợi refetch xong mới đổi. Khi service đã trả về bản
+ghi mới, ghi thẳng vào cache bằng `setQueryData` rồi mới `invalidate` các query dạng gộp.
+
+**Giới hạn 25 ký tự của nội dung chuyển khoản VietQR cắn vào nội dung thật.** "Tiền phòng P101
+kỳ 2026-08" dài 26 ký tự sau khi bỏ dấu và bị cắt cụt. B12 phải tự rút gọn chủ động (VD
+"P101 2026-08"), có test ghi lại ở `packages/utils`.
 
 **Kho mock nằm trong bộ nhớ TỪNG TIẾN TRÌNH — server prefetch không thấy mutation của trình
 duyệt.** Thêm phòng ở B8 rồi quay lại B6 vẫn thấy số cũ, vì `staleTime: 30s` của app coi dữ

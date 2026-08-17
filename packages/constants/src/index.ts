@@ -1,3 +1,5 @@
+export { findBankByCode, VIETNAM_BANKS, type BankInfo } from './vn/banks';
+
 export {
   loadVnWards,
   provinceName,

@@ -35,6 +35,20 @@ export function saveProperty(property: Property): void {
   properties.set(property.id, property);
 }
 
+/**
+ * Xóa khu khỏi danh sách quản lý.
+ *
+ * Backend thật là **xóa mềm** (`deletedAt`) — hóa đơn, hợp đồng và đánh giá cũ phải còn
+ * nguyên. Ở kho mock chưa có khái niệm cột nên bỏ khỏi Map; phòng thuộc khu cũng được gỡ để
+ * số liệu tổng không đếm nhầm.
+ */
+export function removeProperty(propertyId: string): void {
+  properties.delete(propertyId);
+  for (const room of listRooms(propertyId)) {
+    rooms.delete(room.id);
+  }
+}
+
 export function listRooms(propertyId: string): RoomListItem[] {
   return [...rooms.values()].filter((item) => item.propertyId === propertyId);
 }

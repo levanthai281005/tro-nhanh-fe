@@ -1,9 +1,11 @@
 'use client';
 
 import type { RoomStatus } from '@tronhanh/schemas';
-import { DoorClosed } from 'lucide-react';
+import { DoorClosed, Settings2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { WriteGuardButton } from '@/features/session/components/WriteGuardButton';
@@ -39,6 +41,7 @@ type ActiveDialog =
   | null;
 
 export function RoomsPage({ sellerId, propertyId, propertyName }: RoomsPageProps) {
+  const router = useRouter();
   const [keyword, setKeyword] = useState('');
   const [filter, setFilter] = useState<RoomFilter>('all');
   const [sort, setSort] = useState<RoomSort>('recent');
@@ -97,7 +100,20 @@ export function RoomsPage({ sellerId, propertyId, propertyName }: RoomsPageProps
           </h1>
         </div>
 
-        <PropertySwitcher currentPropertyId={propertyId} properties={propertiesData?.items ?? []} />
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => router.push(`/chu-tro/khu-tro/${propertyId}`)}
+            size="sm"
+            variant="outline"
+          >
+            <Settings2 aria-hidden="true" className="size-4" />
+            Cài đặt khu
+          </Button>
+          <PropertySwitcher
+            currentPropertyId={propertyId}
+            properties={propertiesData?.items ?? []}
+          />
+        </div>
       </header>
 
       {/* Chỉ vẽ khi không có dialog nào mở: modal phủ kín màn hình nên banner ở đây sẽ nằm

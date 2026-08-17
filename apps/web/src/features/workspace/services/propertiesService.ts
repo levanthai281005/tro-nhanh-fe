@@ -3,12 +3,16 @@ import type {
   PropertiesResult,
   Property,
   PropertyListItem,
+  UpdatePropertyInfoInput,
+  UpdatePropertyPayoutInput,
+  UpdatePropertyPricingInput,
 } from '@/features/workspace/types/property';
 import {
   createLocalId,
   findProperty,
   listProperties,
   listRooms,
+  removeProperty,
   saveProperty,
   waitForMockRequest,
 } from '@/features/workspace/services/workspaceStore';
@@ -82,6 +86,8 @@ export async function createProperty(
     bankAccountName: null,
     isPublicProfileEnabled: false,
     publicSlug: null,
+    avgRating: null,
+    reviewCount: 0,
     // Mức phổ biến ở TP.HCM, chủ trọ sửa lại ở màn chi tiết khu. Để 0 thì hóa đơn đầu tiên ra
     // số sai mà không ai để ý.
     electricityPrice: 3500,
@@ -93,4 +99,128 @@ export async function createProperty(
 
   saveProperty(property);
   return property;
+}
+
+/** Đọc bản ghi hiện tại rồi ghi đè phần được sửa. Ném lỗi tiếng Việt nếu khu không còn. */
+function mutateProperty(propertyId: string, patch: Partial<Property>): Property {
+  const current = findProperty(propertyId);
+  if (!current) throw new Error('Không tìm thấy khu trọ.');
+
+  const updated: Property = { ...current, ...patch, updatedAt: new Date().toISOString() };
+  saveProperty(updated);
+  return updated;
+}
+
+// TODO: nối API thật khi packages/types sinh xong: PUT /management/properties/{id}.
+export async function updatePropertyInfo(
+  propertyId: string,
+  input: UpdatePropertyInfoInput,
+): Promise<Property> {
+  await waitForMockRequest();
+  return mutateProperty(propertyId, {
+    name: input.name.trim(),
+    address: input.address.trim(),
+    district: input.district.trim(),
+    provinceCode: input.provinceCode,
+    wardCode: input.wardCode,
+    floorCount: input.floorCount,
+    note: input.note?.trim() || null,
+  });
+}
+
+// TODO: nối API thật khi packages/types sinh xong: PATCH /management/properties/{id}/settings.
+export async function updatePropertyPricing(
+  propertyId: string,
+  input: UpdatePropertyPricingInput,
+): Promise<Property> {
+  await waitForMockRequest();
+  return mutateProperty(propertyId, {
+    electricityPrice: input.electricityPrice,
+    waterPrice: input.waterPrice,
+    servicePrice: input.servicePrice,
+  });
+}
+
+// TODO: nối API thật khi packages/types sinh xong: PUT /management/properties/{id}.
+export async function updatePropertyPayout(
+  propertyId: string,
+  input: UpdatePropertyPayoutInput,
+): Promise<Property> {
+  await waitForMockRequest();
+  return mutateProperty(propertyId, {
+    bankName: input.bankName?.trim() || null,
+    bankAccountNumber: input.bankAccountNumber?.trim() || null,
+    bankAccountName: input.bankAccountName?.trim() || null,
+  });
+}
+
+/**
+ * Bật/tắt hồ sơ khu công khai (BR-024).
+ *
+ * Tắt public **không xóa đánh giá** — review vẫn nằm trong DB, chỉ thôi hiển thị; bật lại là
+ * hiện lại. `publicSlug` do backend sinh và bảo đảm unique; ở đây tạo tạm từ tên khu để bản
+ * demo có đường dẫn xem trước.
+ */
+// TODO: nối API thật khi packages/types sinh xong: PATCH /management/properties/{id}/public.
+export async function setPropertyPublicProfile(
+  propertyId: string,
+  isEnabled: boolean,
+): Promise<Property> {
+  await waitForMockRequest();
+
+  const current = findProperty(propertyId);
+  if (!current) throw new Error('Không tìm thấy khu trọ.');
+  if (isEnabled && !current.district.trim()) {
+    throw new Error('Cần chọn khu vực cho khu trọ trước khi bật hồ sơ công khai.');
+  }
+
+  return mutateProperty(propertyId, {
+    isPublicProfileEnabled: isEnabled,
+    publicSlug: isEnabled ? (current.publicSlug ?? toSlug(current.name)) : current.publicSlug,
+  });
+}
+
+function toSlug(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+/**
+ * Xóa mềm khu trọ — BR-011.
+ *
+ * Chặn khi còn phòng `Rented` hoặc `Deposited`: phòng đang có người ở hoặc đã nhận cọc mà khu
+ * biến mất khỏi màn quản lý là mất dấu vết vận hành. Dữ liệu hóa đơn và hợp đồng cũ **giữ
+ * nguyên** kể cả sau khi xóa.
+ */
+// TODO: nối API thật khi packages/types sinh xong: DELETE /management/properties/{id}.
+export async function deleteProperty(propertyId: string): Promise<void> {
+  await waitForMockRequest();
+
+  const current = findProperty(propertyId);
+  if (!current) throw new Error('Không tìm thấy khu trọ.');
+
+  const blockingRooms = listRooms(propertyId).filter(
+    (room) => room.status === 'Rented' || room.status === 'Deposited',
+  );
+  if (blockingRooms.length > 0) {
+    throw new Error(
+      `Khu còn ${blockingRooms.length} phòng đang cho thuê hoặc đã nhận cọc. Hãy kết thúc hợp đồng của các phòng đó trước khi xóa khu.`,
+    );
+  }
+
+  removeProperty(propertyId);
+}
+
+/** Số phòng đang chặn việc xóa khu — dùng để cảnh báo TRƯỚC khi người dùng bấm xóa. */
+export async function countBlockingRooms(propertyId: string): Promise<number> {
+  await waitForMockRequest();
+  return listRooms(propertyId).filter(
+    (room) => room.status === 'Rented' || room.status === 'Deposited',
+  ).length;
 }
