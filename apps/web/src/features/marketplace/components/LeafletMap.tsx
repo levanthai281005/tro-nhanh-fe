@@ -119,7 +119,9 @@ export function LeafletMap({
     <MapContainer
       center={center}
       className="size-full"
-      scrollWheelZoom={false}
+      // Bản đồ chỉ xem thì khoá cuộn để người dùng cuộn trang qua nó không bị kẹt lại phóng
+      // to bản đồ; bản đồ ghim thì cần cuộn để zoom mà chọn cho chính xác.
+      scrollWheelZoom={isPickable}
       style={{ height }}
       zoom={zoom}
       zoomControl={isPickable}
