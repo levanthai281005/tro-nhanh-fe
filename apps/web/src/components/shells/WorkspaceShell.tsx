@@ -33,6 +33,15 @@ interface WorkspaceNavItem {
   label: string;
   href: string;
   Icon: LucideIcon;
+  /**
+   * Route đã dựng chưa.
+   *
+   * Sidebar liệt kê đủ bản đồ khu Workspace từ đầu, nên trong lúc rebuild sẽ có mục trỏ tới
+   * route chưa tồn tại. Bấm vào là ra 404 — người dùng không phân biệt được "chưa làm" với
+   * "hỏng", và ở buổi demo thì đó là câu hỏi đầu tiên bị hỏi. Mục chưa sẵn sàng vẫn **hiện**
+   * (để thấy sản phẩm sẽ có gì) nhưng không bấm được và nói rõ là sắp có.
+   */
+  isReady?: boolean;
 }
 
 /**
@@ -45,16 +54,19 @@ interface WorkspaceNavItem {
  * nhưng đặt đúng chỗ và ghi rõ là đang rời khỏi Workspace.
  */
 const CROSS_SURFACE_NAV: WorkspaceNavItem[] = [
-  { label: 'Tin đăng của tôi', href: '/tai-khoan/tin-cho-thue', Icon: FileText },
-  { label: 'Đăng tin cho thuê', href: '/dang-tin-cho-thue', Icon: PlusCircle },
+  { label: 'Tin đăng của tôi', href: '/tai-khoan/tin-cho-thue', Icon: FileText, isReady: true },
+  { label: 'Đăng tin cho thuê', href: '/dang-tin-cho-thue', Icon: PlusCircle, isReady: true },
+  { label: 'Tin nhắn', href: '/tin-nhan', Icon: MessageSquare }, // A11
+  { label: 'Về trang tìm phòng', href: '/', Icon: Search, isReady: true },
 ];
 
+/** `isReady` bật lên khi route tương ứng được dựng — xem `SCREENS_WORKSPACE.md`. */
 const SAAS_NAV: WorkspaceNavItem[] = [
-  { label: 'Tổng quan', href: '/chu-tro/tong-quan', Icon: LayoutDashboard },
-  { label: 'Khu trọ & Phòng', href: '/chu-tro/khu-tro', Icon: Building2 },
-  { label: 'Người ở & Hợp đồng', href: '/chu-tro/hop-dong', Icon: FileSignature },
-  { label: 'Hóa đơn & Thanh toán', href: '/chu-tro/hoa-don', Icon: ReceiptText },
-  { label: 'Gói dịch vụ', href: '/chu-tro/goi-dich-vu', Icon: Package },
+  { label: 'Tổng quan', href: '/chu-tro/tong-quan', Icon: LayoutDashboard }, // B3
+  { label: 'Khu trọ & Phòng', href: '/chu-tro/khu-tro', Icon: Building2, isReady: true }, // B6/B8
+  { label: 'Người ở & Hợp đồng', href: '/chu-tro/hop-dong', Icon: FileSignature }, // B11
+  { label: 'Hóa đơn & Thanh toán', href: '/chu-tro/hoa-don', Icon: ReceiptText }, // B12
+  { label: 'Gói dịch vụ', href: '/chu-tro/goi-dich-vu', Icon: Package }, // B15
 ];
 
 export function WorkspaceShell({
@@ -122,28 +134,8 @@ function WorkspaceSidebar({
       <div className="border-t border-line px-3 py-3.5">
         <NavGroupLabel>Trên Trọ Nhanh</NavGroupLabel>
         {CROSS_SURFACE_NAV.map((item) => (
-          <Link
-            key={item.href}
-            className="flex items-center gap-3 rounded-[10px] px-[13px] py-2 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas"
-            href={item.href}
-          >
-            <item.Icon aria-hidden="true" className="size-4" />
-            {item.label}
-          </Link>
+          <WorkspaceNavLink key={item.href} item={item} pathname={pathname} />
         ))}
-        <Link
-          className="flex items-center gap-3 rounded-[10px] px-[13px] py-2 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas"
-          href="/tin-nhan"
-        >
-          <MessageSquare aria-hidden="true" className="size-4" />
-          Tin nhắn
-        </Link>
-        <Link
-          className="mt-1 flex items-center gap-3 rounded-[10px] px-[13px] py-2 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas"
-          href="/"
-        >
-          <Search aria-hidden="true" className="size-4" />← Về trang tìm phòng
-        </Link>
       </div>
     </aside>
   );
@@ -172,15 +164,34 @@ function WorkspaceNavLink({
   isLocked?: boolean;
 }) {
   const isActive = pathname.startsWith(item.href);
-  const href = isLocked ? '/chu-tro' : item.href;
+  const rowClassName =
+    'flex items-center justify-between rounded-[10px] px-[13px] py-2.5 text-[13.5px] font-medium';
+
+  // Route chưa dựng: hiện để thấy bản đồ tính năng, nhưng không phải là link — bấm vào 404
+  // thì người dùng đọc thành "hỏng", không đọc thành "chưa làm".
+  if (!item.isReady) {
+    return (
+      <span
+        className={cn(rowClassName, 'cursor-default text-ink-muted/55')}
+        title="Màn hình này đang được xây dựng"
+      >
+        <span className="flex items-center gap-3">
+          <item.Icon aria-hidden="true" className="size-[17px]" />
+          {item.label}
+        </span>
+        <span className="text-[10.5px] font-bold uppercase tracking-wide">Sắp có</span>
+      </span>
+    );
+  }
 
   return (
     <Link
       className={cn(
-        'flex items-center justify-between rounded-[10px] px-[13px] py-2.5 text-[13.5px] font-medium text-ink-muted transition-colors hover:bg-canvas',
+        rowClassName,
+        'text-ink-muted transition-colors hover:bg-canvas',
         isActive && 'bg-cream font-bold text-primary hover:bg-cream',
       )}
-      href={href}
+      href={isLocked ? '/chu-tro' : item.href}
       title={isLocked ? 'Kích hoạt dùng thử để mở tính năng này' : undefined}
     >
       <span className="flex items-center gap-3">
@@ -197,14 +208,14 @@ function WorkspaceMobileHeader({ title }: { title: string }) {
     <header className="sticky top-0 z-[100] flex h-14 shrink-0 items-center gap-3 bg-primary-press px-4 shadow-lg lg:hidden">
       <BrandLogo className="text-cream" size="sm" />
       <span className="min-w-0 flex-1 truncate text-lg font-extrabold text-cream">{title}</span>
-      <Link
-        aria-label="Thông báo"
-        className="relative flex size-9 items-center justify-center rounded-full bg-surface/10 text-cream"
-        href="/thong-bao"
+      {/* Màn thông báo chưa dựng — giữ chỗ, không dẫn tới 404. */}
+      <span
+        aria-hidden="true"
+        className="relative flex size-9 items-center justify-center rounded-full bg-surface/10 text-cream opacity-50"
+        title="Màn hình thông báo đang được xây dựng"
       >
-        <Bell aria-hidden="true" className="size-[17px]" />
-        <span className="absolute right-[9px] top-2 size-[7px] rounded-full bg-warning" />
-      </Link>
+        <Bell className="size-[17px]" />
+      </span>
     </header>
   );
 }
@@ -220,12 +231,7 @@ function SubscriptionBanner({
     return (
       <div className="flex items-center justify-between gap-2.5 border-b border-line bg-warning-soft px-5 py-2.5 text-[13px] font-bold text-primary">
         <p>⚡ Bạn đang sử dụng bản dùng thử SaaS. Còn {trialDaysLeft} ngày dùng thử.</p>
-        <Link
-          className="shrink-0 rounded-sm bg-primary px-3.5 py-1.5 text-xs text-surface"
-          href="/chu-tro/goi-dich-vu"
-        >
-          Nâng cấp gói
-        </Link>
+        <SubscriptionCta className="bg-primary" label="Nâng cấp gói" />
       </div>
     );
   }
@@ -234,17 +240,43 @@ function SubscriptionBanner({
     return (
       <div className="flex items-center justify-between gap-2.5 border-b border-error bg-error-soft px-5 py-2.5 text-[13px] font-bold text-error">
         <p>⚠️ Gói dịch vụ đã hết hạn. Workspace đang ở chế độ chỉ đọc.</p>
-        <Link
-          className="shrink-0 rounded-sm bg-error px-3.5 py-1.5 text-xs text-surface"
-          href="/chu-tro/goi-dich-vu"
-        >
-          Gia hạn gói
-        </Link>
+        <SubscriptionCta className="bg-error" label="Gia hạn gói" />
       </div>
     );
   }
 
   return null;
+}
+
+/**
+ * Nút dẫn tới màn Gói dịch vụ (B15).
+ *
+ * B15 chưa dựng, nên nút hiện chỉ là nhãn tĩnh. Một CTA thanh toán dẫn tới 404 tệ hơn hẳn
+ * việc chưa có CTA: người dùng đang muốn trả tiền mà gặp trang lỗi sẽ không thử lại. Khi B15
+ * xong, đổi `IS_SUBSCRIPTION_PAGE_READY` thành `true` là nút sống lại.
+ */
+const IS_SUBSCRIPTION_PAGE_READY = false;
+
+function SubscriptionCta({ label, className }: { label: string; className: string }) {
+  if (!IS_SUBSCRIPTION_PAGE_READY) {
+    return (
+      <span
+        className="shrink-0 rounded-sm border border-current px-3.5 py-1.5 text-xs opacity-70"
+        title="Màn hình gói dịch vụ đang được xây dựng"
+      >
+        {label} · sắp có
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      className={cn('shrink-0 rounded-sm px-3.5 py-1.5 text-xs text-surface', className)}
+      href="/chu-tro/goi-dich-vu"
+    >
+      {label}
+    </Link>
+  );
 }
 
 function WorkspaceMobileTabs({
@@ -255,10 +287,10 @@ function WorkspaceMobileTabs({
   workspaceStatus: WorkspaceStatus;
 }) {
   const tabs = [
-    { label: 'Tổng quan', href: '/chu-tro/tong-quan', Icon: LayoutDashboard },
-    { label: 'Khu trọ', href: '/chu-tro/khu-tro', Icon: Building2 },
-    { label: 'Hóa đơn', href: '/chu-tro/hoa-don', Icon: ReceiptText },
-    { label: 'Tài khoản', href: '/tai-khoan/ho-so', Icon: User, isFree: true },
+    { label: 'Tổng quan', href: '/chu-tro/tong-quan', Icon: LayoutDashboard, isReady: false },
+    { label: 'Khu trọ', href: '/chu-tro/khu-tro', Icon: Building2, isReady: true },
+    { label: 'Hóa đơn', href: '/chu-tro/hoa-don', Icon: ReceiptText, isReady: false },
+    { label: 'Tài khoản', href: '/tai-khoan/ho-so', Icon: User, isFree: true, isReady: false },
   ];
 
   return (
@@ -266,6 +298,26 @@ function WorkspaceMobileTabs({
       {tabs.map((tab) => {
         const isLocked = workspaceStatus === 'NONE' && !tab.isFree;
         const isActive = pathname.startsWith(tab.href);
+
+        // Cùng lý do với sidebar: tab chưa có route thì làm mờ và không bấm được, thay vì
+        // đưa người dùng tới 404.
+        if (!tab.isReady) {
+          return (
+            <span
+              key={tab.href}
+              className="flex min-h-11 flex-1 flex-col items-center justify-center gap-[3px] opacity-40"
+              title="Màn hình này đang được xây dựng"
+            >
+              <tab.Icon
+                aria-hidden="true"
+                className="size-[22px] text-status-rented"
+                strokeWidth={1.8}
+              />
+              <span className="text-[10px] text-status-rented">{tab.label}</span>
+            </span>
+          );
+        }
+
         return (
           <Link
             key={tab.href}
