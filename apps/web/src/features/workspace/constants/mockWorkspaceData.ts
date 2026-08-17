@@ -1,5 +1,5 @@
 import type { Property } from '@/features/workspace/types/property';
-import type { Room, RoomOccupant } from '@/features/workspace/types/room';
+import type { Room } from '@/features/workspace/types/room';
 
 /**
  * Dữ liệu mẫu của Workspace.
@@ -64,7 +64,6 @@ export const MOCK_PROPERTIES: readonly Property[] = [
 ];
 
 interface MockRoomSeed extends Room {
-  occupants: readonly RoomOccupant[];
   hasActiveListing: boolean;
   hasActiveContract: boolean;
 }
@@ -79,7 +78,6 @@ function room(seed: {
   status: Room['status'];
   updatedAt: string;
   note?: string | null;
-  occupants?: readonly RoomOccupant[];
   hasActiveListing?: boolean;
   hasActiveContract?: boolean;
   electricityPrice?: number | null;
@@ -98,27 +96,9 @@ function room(seed: {
     servicePrice: null,
     createdAt: '2026-03-02T00:00:00.000Z',
     updatedAt: seed.updatedAt,
-    occupants: seed.occupants ?? [],
     hasActiveListing: seed.hasActiveListing ?? false,
     hasActiveContract: seed.hasActiveContract ?? false,
   };
-}
-
-/**
- * Người ở mẫu. Người đầu tiên trong danh sách là **đại diện hợp đồng** khi phòng có hợp đồng;
- * những người sau là bạn cùng phòng, mỗi người một bản ghi `Occupancy` riêng.
- */
-function occupants(
-  seeds: ReadonlyArray<[name: string, phone: string, link: RoomOccupant['linkStatus']]>,
-  hasRepresentative = true,
-): readonly RoomOccupant[] {
-  return seeds.map(([fullName, phoneNumber, linkStatus], index) => ({
-    id: `80000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}-${phoneNumber}`,
-    fullName,
-    phoneNumber,
-    isContractRepresentative: hasRepresentative && index === 0,
-    linkStatus,
-  }));
 }
 
 const HOANG_DIEU = '60000000-0000-4000-8000-000000000001';
@@ -134,10 +114,6 @@ export const MOCK_ROOMS: readonly MockRoomSeed[] = [
     price: 3200000,
     status: 'Rented',
     updatedAt: '2026-08-16T09:00:00.000Z',
-    occupants: occupants([
-      ['Trần Thị Mai', '0905123456', 'Confirmed'],
-      ['Nguyễn Hoàng Nam', '0918445566', 'Pending'],
-    ]),
     hasActiveContract: true,
   }),
   room({
@@ -161,8 +137,6 @@ export const MOCK_ROOMS: readonly MockRoomSeed[] = [
     price: 3000000,
     status: 'Deposited',
     updatedAt: '2026-08-14T09:00:00.000Z',
-    // Đã nhận cọc nhưng chưa lập hợp đồng — chưa có ai là đại diện. Trạng thái hợp lệ.
-    occupants: occupants([['Lê Quốc Huy', '0938777111', null]], false),
   }),
   room({
     id: '70000000-0000-4000-8000-000000000004',
@@ -173,11 +147,6 @@ export const MOCK_ROOMS: readonly MockRoomSeed[] = [
     price: 3600000,
     status: 'Rented',
     updatedAt: '2026-08-13T09:00:00.000Z',
-    occupants: occupants([
-      ['Phạm Văn Đức', '0977345678', 'Confirmed'],
-      ['Phạm Thị Lan', '0977345679', 'Confirmed'],
-      ['Phạm Minh Khôi', '0965223344', null],
-    ]),
     hasActiveContract: true,
     electricityPrice: 3700,
   }),
@@ -211,10 +180,6 @@ export const MOCK_ROOMS: readonly MockRoomSeed[] = [
     price: 4200000,
     status: 'Rented',
     updatedAt: '2026-08-11T09:00:00.000Z',
-    occupants: occupants([
-      ['Nguyễn Thu Hà', '0913222888', 'Confirmed'],
-      ['Đỗ Bảo Anh', '0934112233', 'Confirmed'],
-    ]),
     hasActiveContract: true,
   }),
   room({
@@ -237,7 +202,6 @@ export const MOCK_ROOMS: readonly MockRoomSeed[] = [
     price: 2400000,
     status: 'Rented',
     updatedAt: '2026-08-09T09:00:00.000Z',
-    occupants: occupants([['Võ Minh Tuấn', '0966123123', 'Confirmed']]),
     hasActiveContract: true,
   }),
   room({
@@ -269,12 +233,5 @@ export const MOCK_ROOMS: readonly MockRoomSeed[] = [
     price: 2900000,
     status: 'Deposited',
     updatedAt: '2026-08-06T09:00:00.000Z',
-    occupants: occupants(
-      [
-        ['Đặng Kim Ngân', '0902888444', 'Pending'],
-        ['Hoàng Gia Bảo', '0947556677', null],
-      ],
-      false,
-    ),
   }),
 ];

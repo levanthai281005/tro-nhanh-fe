@@ -159,10 +159,24 @@ ngày — cần lâu hơn thì chia nhỏ.
         theo **ba tầng** (khu → phòng nullable → chốt cứng vào `UtilityReading`), và
         `bank_name` lưu **mã** ngân hàng chứ không lưu tên.
 
+- [x] **B10 quản lý người ở** — `feat/port-occupancy`, route `/chu-tro/phong/[id]/nguoi-o`
+      - **Tách `Occupancy` thành bảng riêng.** Trước đó nó nằm lồng trong `RoomListItem`: đọc
+        được nhưng không ghi được. Giờ `occupancies` là Map riêng trong kho mock, phòng ghép
+        người ở lúc đọc — đúng hình dạng DB thật và là điều kiện để B11 gắn hợp đồng.
+      - **Liên kết bằng SĐT, không phải email.** Prototype tra `renterEmail`; sai với BR-016
+        (SĐT là định danh duy nhất) và email lại là trường tùy chọn nên phần lớn người ở
+        không có.
+      - **BR-029 không có đường tắt:** gắn tài khoản luôn ra `Pending`, không nhánh nào cho
+        chủ trọ đặt thẳng `Confirmed`.
+      - Tách khỏi hợp đồng: B10 chỉ thêm/kết thúc người ở và chỉ định đại diện. Tạo Contract
+        (kéo theo đổi `Room.status`, chặn chồng lấn) để B11.
+
 ### Đang làm
 
-- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B3 (dashboard), B9/B10 (chi tiết
-      phòng + người ở), B11 hợp đồng, B12 hóa đơn.
+- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B11 hợp đồng (đã có người đại
+      diện để gắn), rồi B12 hóa đơn, B9 chi tiết phòng, B3 dashboard.
+      **B3 để gần cuối** — 4/5 nhóm số của nó lấy từ Contract/Invoice/Payment; làm sớm thì
+      phần lớn là số bịa và phải viết lại.
 - [ ] Nút **"Tạo tin từ phòng"** (điểm nối Room → RentalListing) — chưa làm: B5 chưa đọc
       `?roomId=` để prefill. Badge "Có tin đang chạy" thì đã có. Làm thành nhánh riêng chạm
       cả hai feature.
@@ -245,6 +259,16 @@ bản đồ dời, ghim văng ra ngoài khung và trông như không có gì x�
 **Chỉ một file được chạm thư viện bản đồ.** Mọi nơi đi qua `ListingLocationMap`; phần Leaflet
 nằm sau `LeafletMap`. Cùng nguyên tắc với `loadVnWards()` cho dữ liệu hành chính — đổi nhà
 cung cấp sau này chỉ sửa một file.
+
+**`endDate` là ngày BẮT ĐẦU không còn ở, không phải ngày ở cuối cùng.** Dùng `endDate >= today`
+để tính "đang ở" thì chủ trọ bấm "Kết thúc ở", chọn hôm nay, rồi thấy người đó vẫn nằm ở mục
+"Đang ở" — trông như thao tác không ăn. Dùng `>`. Người có `endDate` ở tương lai vẫn là đang ở
+nhưng phải hiển thị khác ("Sắp rời DD/MM"), vì báo trước một tháng là chuyện bình thường.
+
+**Ghi cache sau mutation: cẩn thận khi một thao tác chạm NHIỀU bản ghi.** Đổi người đại diện
+hợp đồng sửa hai `Occupancy` (người cũ mất vai trò, người mới nhận). Ghi mỗi bản ghi mà
+mutation trả về vào cache sẽ hiện **hai người cùng làm đại diện**. Cho mutation trả về trạng
+thái mới của cả nhóm rồi `setQueryData` một lần.
 
 **Sau mutation, `invalidate` để lộ khoảng một giây hai chỗ nói ngược nhau.** Thông báo "đã
 lưu" hiện ngay còn dữ liệu trên màn thì đợi refetch xong mới đổi. Khi service đã trả về bản

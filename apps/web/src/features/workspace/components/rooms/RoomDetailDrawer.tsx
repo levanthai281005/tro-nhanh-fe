@@ -1,12 +1,14 @@
 'use client';
 
 import { ALLOWED_ROOM_STATUS_TRANSITIONS, type RoomStatus } from '@tronhanh/schemas';
-import { BadgeCheck, FileSignature, Megaphone, Pencil, Trash2, X } from 'lucide-react';
+import { FileSignature, Megaphone, Pencil, Trash2, Users, X } from 'lucide-react';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { WriteGuardButton } from '@/features/session/components/WriteGuardButton';
+import { OccupantLinkBadge } from '@/features/workspace/components/occupancy/OccupantLinkBadge';
 import { ROOM_STATUS_LABELS } from '@/features/workspace/constants/roomStatus';
-import type { RoomListItem, RoomOccupant } from '@/features/workspace/types/room';
+import type { RoomListItem } from '@/features/workspace/types/room';
 import { formatVnd } from '@/utils/formatVnd';
 
 interface RoomDetailDrawerProps {
@@ -91,9 +93,18 @@ export function RoomDetailDrawer({
 
           {room.occupants.length > 0 ? (
             <div>
-              <p className="m-0 mb-2 text-xs font-bold uppercase tracking-wide text-ink-muted">
-                Người ở hiện tại ({room.occupants.length})
-              </p>
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="m-0 text-xs font-bold uppercase tracking-wide text-ink-muted">
+                  Người ở hiện tại ({room.occupants.length})
+                </p>
+                <Link
+                  className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-primary transition-colors hover:text-primary-hover"
+                  href={`/chu-tro/phong/${room.id}/nguoi-o`}
+                >
+                  <Users aria-hidden="true" className="size-3.5" />
+                  Quản lý
+                </Link>
+              </div>
               <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
                 {room.occupants.map((occupant) => (
                   <li
@@ -205,30 +216,6 @@ export function RoomDetailDrawer({
       </div>
     </div>
   );
-}
-
-/**
- * Trạng thái liên kết tài khoản của người ở (BR-029).
- *
- * `null` = chưa gắn tài khoản nào, thêm tay bằng tên + SĐT. Đây là trạng thái **bình thường**
- * chứ không phải lỗi — phần lớn người ở chưa cài app; nên hiển thị nhạt, không cảnh báo.
- */
-function OccupantLinkBadge({ linkStatus }: { linkStatus: RoomOccupant['linkStatus'] }) {
-  if (linkStatus === null) {
-    return <span className="text-[11px] text-ink-muted">Chưa liên kết tài khoản</span>;
-  }
-  if (linkStatus === 'Confirmed') {
-    return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-status-available">
-        <BadgeCheck aria-hidden="true" className="size-3" />
-        Đã liên kết
-      </span>
-    );
-  }
-  if (linkStatus === 'Pending') {
-    return <span className="text-[11px] font-semibold text-warning">Chờ xác nhận</span>;
-  }
-  return <span className="text-[11px] text-ink-muted">Đã từ chối liên kết</span>;
 }
 
 function DetailRow({ label, value }: { label: string; value: string }) {

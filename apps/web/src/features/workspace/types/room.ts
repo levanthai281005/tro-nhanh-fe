@@ -1,4 +1,5 @@
-import type { OccupancyLinkStatus, RoomStatus } from '@tronhanh/schemas';
+import type { RoomStatus } from '@tronhanh/schemas';
+import type { Occupancy } from '@/features/workspace/types/occupancy';
 
 /** Phòng — entity `Room`, `DATA_ENTITIES.md`. */
 export interface Room {
@@ -19,27 +20,17 @@ export interface Room {
 }
 
 /**
- * Một người ở trong phòng — bản rút gọn của `Occupancy`. Quản lý đầy đủ thuộc B10.
+ * Người ở của phòng.
  *
- * Một `Room` có thể có **nhiều Occupancy Active đồng thời** (bạn cùng phòng, cả gia đình).
- * Không phải "một người ở kèm số lượng người": mỗi người là một bản ghi riêng, có SĐT riêng,
- * và trạng thái liên kết tài khoản riêng (BR-029).
+ * Một `Room` có **nhiều Occupancy Active đồng thời** (bạn cùng phòng, cả gia đình). Không phải
+ * "một người ở kèm số lượng người": mỗi người là một bản ghi riêng, có SĐT riêng và trạng thái
+ * liên kết tài khoản riêng (BR-029). Quản lý đầy đủ ở B10.
  */
-export interface RoomOccupant {
-  id: string;
-  fullName: string;
-  phoneNumber: string;
-  /**
-   * Occupancy đứng tên `Contract` của phòng. Mỗi Room tối đa **một** Contract Active
-   * (BR-006), nên tối đa một người đại diện.
-   */
-  isContractRepresentative: boolean;
-  /** `null` khi chưa gắn tài khoản Renter nào (thêm tay bằng tên + SĐT — Module 7). */
-  linkStatus: OccupancyLinkStatus | null;
-}
+export type RoomOccupant = Occupancy;
 
 export interface RoomListItem extends Room {
-  occupants: readonly RoomOccupant[];
+  /** **Chỉ người đang ở** — bản ghi đã kết thúc nằm ở lịch sử, xem `getOccupancyHistory`. */
+  occupants: readonly Occupancy[];
   /**
    * BR-027 — phòng đang có `RentalListing` ở trạng thái `Active` gắn với nó. Dùng cho badge
    * "Có tin đang chạy" và để chặn tạo tin thứ hai từ cùng một phòng.
