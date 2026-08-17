@@ -62,7 +62,9 @@ function hasContent(values: PostListingFormValues): boolean {
     values.contactPhone.trim() ||
     values.photoUrls.length > 0 ||
     values.amenities.length > 0 ||
-    values.otherFees.length > 0,
+    values.otherFees.length > 0 ||
+    values.nearbyPlaces.length > 0 ||
+    values.latitude !== null,
   );
 }
 

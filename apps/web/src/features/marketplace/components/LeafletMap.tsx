@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import L from 'leaflet';
 // Leaflet needs these engine styles to position its panes and OpenStreetMap tiles; Tailwind cannot replace them.
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 
 interface LeafletMapProps {
   latitude: number;
@@ -12,6 +12,8 @@ interface LeafletMapProps {
   markerLabel?: string;
   zoom: number;
   height: number;
+  /** Có mặt thì bản đồ cho chọn toạ độ: bấm lên bản đồ hoặc kéo ghim. */
+  onPick?: (latitude: number, longitude: number) => void;
 }
 
 const OSM_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -56,11 +58,27 @@ function MapSizeInvalidator() {
   return null;
 }
 
+function MapClickHandler({ onPick }: { onPick: (latitude: number, longitude: number) => void }) {
+  useMapEvents({
+    click: (event) => onPick(event.latlng.lat, event.latlng.lng),
+  });
+
+  return null;
+}
+
 /**
  * Private Leaflet adapter. Keep all provider-specific imports and lifecycle behavior here.
  */
-export function LeafletMap({ latitude, longitude, markerLabel, zoom, height }: LeafletMapProps) {
+export function LeafletMap({
+  latitude,
+  longitude,
+  markerLabel,
+  zoom,
+  height,
+  onPick,
+}: LeafletMapProps) {
   const center: [number, number] = [latitude, longitude];
+  const isPickable = Boolean(onPick);
 
   return (
     <MapContainer
@@ -69,11 +87,27 @@ export function LeafletMap({ latitude, longitude, markerLabel, zoom, height }: L
       scrollWheelZoom={false}
       style={{ height }}
       zoom={zoom}
-      zoomControl={false}
+      zoomControl={isPickable}
     >
       <MapSizeInvalidator />
       <TileLayer attribution={OSM_ATTRIBUTION} maxZoom={19} url={OSM_TILE_URL} />
-      <Marker icon={listingMarkerIcon} position={center} title={markerLabel} />
+      {onPick ? <MapClickHandler onPick={onPick} /> : null}
+      <Marker
+        draggable={isPickable}
+        eventHandlers={
+          onPick
+            ? {
+                dragend: (event) => {
+                  const { lat, lng } = event.target.getLatLng();
+                  onPick(lat, lng);
+                },
+              }
+            : undefined
+        }
+        icon={listingMarkerIcon}
+        position={center}
+        title={markerLabel}
+      />
     </MapContainer>
   );
 }

@@ -1,3 +1,4 @@
+import type { ListingNearbyCategoryKey } from '@/features/marketplace/types/listingLocation';
 import type { AccessPolicy, RentalPropertyType } from '@/features/marketplace/types/savedListings';
 
 /** Cách tính tiền nước — "100.000đ" không nói lên gì nếu thiếu đơn vị. */
@@ -10,6 +11,14 @@ export interface OtherFee {
   id: string;
   name: string;
   amount: number;
+}
+
+/** Một địa điểm gần phòng do người đăng tự nhập; nhóm lấy từ taxonomy dùng chung. */
+export interface NearbyPlaceEntry {
+  id: string;
+  category: ListingNearbyCategoryKey;
+  name: string;
+  distance: string;
 }
 
 /**
@@ -36,6 +45,7 @@ export interface PostListingFormValues {
   address: string;
   latitude: number | null;
   longitude: number | null;
+  nearbyPlaces: NearbyPlaceEntry[];
 
   // Bước 2 — thông tin phòng
   area: string;
@@ -60,6 +70,15 @@ export interface PostListingFormValues {
   deposit: string;
   otherFees: OtherFee[];
   contactPhone: string;
+
+  /**
+   * Đăng ký đẩy tin nổi bật ngay lúc đăng.
+   *
+   * BR-005 chỉ cho boost tin `Active`, mà tin vừa gửi thì đang `PendingApproval` — nên đây là
+   * **đăng ký trước**, hệ thống áp dụng sau khi tin được duyệt.
+   */
+  wantsBoost: boolean;
+  boostDays: number;
 }
 
 export type PostListingStepId = 'location' | 'room' | 'media' | 'costs';

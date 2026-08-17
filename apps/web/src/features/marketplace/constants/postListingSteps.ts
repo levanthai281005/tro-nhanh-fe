@@ -50,6 +50,7 @@ export const EMPTY_POST_LISTING_VALUES: PostListingFormValues = {
   address: '',
   latitude: null,
   longitude: null,
+  nearbyPlaces: [],
 
   area: '',
   price: '',
@@ -71,6 +72,8 @@ export const EMPTY_POST_LISTING_VALUES: PostListingFormValues = {
   deposit: '',
   otherFees: [],
   contactPhone: '',
+  wantsBoost: false,
+  boostDays: 7,
 };
 
 /** Gợi ý dàn ý cho ô mô tả — ô trống trơn là thứ khiến người ta chần chừ lâu nhất. */

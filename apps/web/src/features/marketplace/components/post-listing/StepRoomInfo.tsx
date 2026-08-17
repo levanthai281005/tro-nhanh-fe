@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormContext } from 'react-hook-form';
-import { AMENITIES } from '@/features/marketplace/constants/catalog';
+import { AMENITY_OPTIONS } from '@/features/marketplace/constants/amenities';
 import {
   FormField,
   inputClassName,
@@ -140,24 +140,32 @@ export function StepRoomInfo() {
         </div>
       </FormField>
 
-      <FormField hint="Chọn những gì phòng có sẵn." label="Tiện ích">
-        <div className="flex flex-wrap gap-2">
-          {AMENITIES.map((amenity) => {
-            const isSelected = values.amenities.includes(amenity);
+      <FormField hint="Chọn những gì phòng có sẵn." label="Tiện ích nổi bật">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+          {AMENITY_OPTIONS.map(({ key, label, Icon }) => {
+            // Lưu NHÃN, không lưu `key` — bộ lọc tìm kiếm và phần đối chiếu icon đều so theo
+            // nhãn; ghi `key` xuống sẽ làm cả hai chết im lặng.
+            const isSelected = values.amenities.includes(label);
+
             return (
               <button
                 aria-pressed={isSelected}
                 className={cn(
-                  'rounded-full border-[1.5px] px-3.5 py-1.5 text-[13px] transition-colors',
+                  'flex items-center gap-2 rounded-md border-[1.5px] px-3 py-2.5 text-left text-[13px] transition-colors',
                   isSelected
-                    ? 'border-primary bg-primary font-bold text-surface'
+                    ? 'border-primary bg-cream font-bold text-primary'
                     : 'border-line bg-surface text-ink-muted hover:border-primary',
                 )}
-                key={amenity}
-                onClick={() => toggleAmenity(amenity)}
+                key={key}
+                onClick={() => toggleAmenity(label)}
                 type="button"
               >
-                {amenity}
+                <Icon
+                  aria-hidden="true"
+                  className={cn('size-4 shrink-0', isSelected ? 'text-primary' : 'text-sand')}
+                  strokeWidth={1.9}
+                />
+                {label}
               </button>
             );
           })}

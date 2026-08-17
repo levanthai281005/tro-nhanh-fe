@@ -44,6 +44,8 @@ export interface SubmitListingInput {
 export interface SubmitListingResult {
   listingId: string;
   status: 'Draft' | 'PendingApproval';
+  /** Đã ghi nhận đăng ký đẩy tin, sẽ áp dụng sau khi tin được duyệt (BR-005). */
+  boostScheduledDays: number | null;
 }
 
 /**
@@ -55,8 +57,16 @@ export interface SubmitListingResult {
 export async function submitListing(input: SubmitListingInput): Promise<SubmitListingResult> {
   await wait(MOCK_REQUEST_DELAY_MS);
 
+  // BR-005 chỉ cho boost tin `Active`. Tin vừa gửi đang chờ duyệt nên không boost ngay được —
+  // chỉ ghi nhận đăng ký, hệ thống áp dụng khi tin chuyển `Active`. Bản nháp thì chưa tính.
+  // TODO: nối API thật — POST /marketplace/listings/{id}/boost tạo PlatformTransaction và trả
+  // URL thanh toán; hiện chưa có cổng thật nên giao diện ghi rõ "(giả lập)" theo AS-002.
+  const boostScheduledDays =
+    !input.isDraft && input.values.wantsBoost ? input.values.boostDays : null;
+
   return {
     listingId: input.listingId ?? `70000000-0000-4000-8000-${Date.now().toString().slice(-12)}`,
     status: input.isDraft ? 'Draft' : 'PendingApproval',
+    boostScheduledDays,
   };
 }

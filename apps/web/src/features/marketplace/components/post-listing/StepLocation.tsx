@@ -9,6 +9,8 @@ import {
   inputClassName,
   inputErrorClassName,
 } from '@/features/marketplace/components/post-listing/FormField';
+import { LocationPicker } from '@/features/marketplace/components/post-listing/LocationPicker';
+import { NearbyPlacesInput } from '@/features/marketplace/components/post-listing/NearbyPlacesInput';
 import type { PostListingFormValues } from '@/features/marketplace/types/postListing';
 import type { RentalPropertyType } from '@/features/marketplace/types/savedListings';
 import { cn } from '@/utils/cn';
@@ -67,6 +69,30 @@ export function StepLocation() {
           data-testid="field-address"
           placeholder="VD: 123 Đường Nguyễn Hữu Thọ"
           {...register('address')}
+        />
+      </FormField>
+
+      <FormField
+        hint="Không bắt buộc, nhưng giúp người tìm trọ hình dung được vị trí."
+        label="Ghim vị trí trên bản đồ"
+      >
+        <LocationPicker
+          latitude={values.latitude}
+          longitude={values.longitude}
+          onChange={(latitude, longitude) => {
+            setValue('latitude', latitude);
+            setValue('longitude', longitude);
+          }}
+        />
+      </FormField>
+
+      <FormField
+        hint="Không bắt buộc. Trường học, chợ, bệnh viện gần phòng là thứ người thuê hay cân nhắc."
+        label="Tiện ích xung quanh"
+      >
+        <NearbyPlacesInput
+          onChange={(next) => setValue('nearbyPlaces', next)}
+          value={values.nearbyPlaces}
         />
       </FormField>
     </div>

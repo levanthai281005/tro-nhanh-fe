@@ -3,6 +3,7 @@
 import { Plus, X } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
+import { BoostUpgradeBlock } from '@/features/marketplace/components/post-listing/BoostUpgradeBlock';
 import {
   FormField,
   inputClassName,
@@ -181,6 +182,13 @@ export function StepCosts() {
           {...register('contactPhone')}
         />
       </FormField>
+
+      <BoostUpgradeBlock
+        isEnabled={values.wantsBoost}
+        onSelectDays={(days) => setValue('boostDays', days)}
+        onToggle={(next) => setValue('wantsBoost', next)}
+        selectedDays={values.boostDays}
+      />
     </div>
   );
 }
