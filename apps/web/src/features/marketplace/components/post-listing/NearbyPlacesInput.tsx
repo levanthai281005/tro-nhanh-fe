@@ -6,6 +6,7 @@ import { NEARBY_CATEGORY_META } from '@/features/marketplace/constants/nearbyCat
 import { inputClassName } from '@/features/marketplace/components/post-listing/FormField';
 import type { ListingNearbyCategoryKey } from '@/features/marketplace/types/listingLocation';
 import type { NearbyPlaceEntry } from '@/features/marketplace/types/postListing';
+import { createLocalId } from '@/features/marketplace/utils/localId';
 import { cn } from '@/utils/cn';
 
 const CATEGORY_KEYS = Object.keys(NEARBY_CATEGORY_META) as ListingNearbyCategoryKey[];
@@ -13,7 +14,12 @@ const MAX_PLACES = 8;
 
 export interface NearbyPlacesInputProps {
   value: NearbyPlaceEntry[];
-  onChange: (next: NearbyPlaceEntry[]) => void;
+  /**
+   * Nhận **hàm cập nhật**, không nhận mảng đã tính sẵn: `value` là ảnh chụp lúc render, nên
+   * hai thao tác liên tiếp trong cùng khung hình sẽ cùng đọc giá trị cũ và đè lên nhau. Cha
+   * tự đọc giá trị hiện thời rồi mới áp hàm này.
+   */
+  onChange: (updater: (current: NearbyPlaceEntry[]) => NearbyPlaceEntry[]) => void;
 }
 
 /**
@@ -29,15 +35,20 @@ export function NearbyPlacesInput({ value, onChange }: NearbyPlacesInputProps) {
   const [isOpen, setIsOpen] = useState(value.length > 0);
 
   const addPlace = () => {
-    onChange([...value, { id: `nearby-${Date.now()}`, category: 'edu', name: '', distance: '' }]);
+    onChange((current) => [
+      ...current,
+      { id: createLocalId('nearby'), category: 'edu', name: '', distance: '' },
+    ]);
   };
 
   const updatePlace = (id: string, patch: Partial<NearbyPlaceEntry>) => {
-    onChange(value.map((place) => (place.id === id ? { ...place, ...patch } : place)));
+    onChange((current) =>
+      current.map((place) => (place.id === id ? { ...place, ...patch } : place)),
+    );
   };
 
   const removePlace = (id: string) => {
-    onChange(value.filter((place) => place.id !== id));
+    onChange((current) => current.filter((place) => place.id !== id));
   };
 
   if (!isOpen) {

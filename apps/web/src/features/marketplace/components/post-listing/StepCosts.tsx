@@ -14,6 +14,7 @@ import type {
   UtilityPricingMode,
   WaterPricingUnit,
 } from '@/features/marketplace/types/postListing';
+import { createLocalId } from '@/features/marketplace/utils/localId';
 import { cn } from '@/utils/cn';
 
 function formatThousands(raw: string) {
@@ -22,25 +23,31 @@ function formatThousands(raw: string) {
 }
 
 export function StepCosts() {
-  const { register, setValue, watch, formState } = useFormContext<PostListingFormValues>();
+  const { register, setValue, getValues, watch, formState } =
+    useFormContext<PostListingFormValues>();
   const errors = formState.errors;
   const values = watch();
 
+  // Mọi thao tác trên danh sách đều đọc bằng `getValues`, không dùng mảng từ `watch` — mảng đó
+  // là ảnh chụp lúc render, hai thao tác liên tiếp trong cùng khung hình sẽ đè lên nhau.
   const addFee = () => {
-    setValue('otherFees', [...values.otherFees, { id: `fee-${Date.now()}`, name: '', amount: 0 }]);
+    setValue('otherFees', [
+      ...getValues('otherFees'),
+      { id: createLocalId('fee'), name: '', amount: 0 },
+    ]);
   };
 
   const updateFee = (id: string, patch: { name?: string; amount?: number }) => {
     setValue(
       'otherFees',
-      values.otherFees.map((fee) => (fee.id === id ? { ...fee, ...patch } : fee)),
+      getValues('otherFees').map((fee) => (fee.id === id ? { ...fee, ...patch } : fee)),
     );
   };
 
   const removeFee = (id: string) => {
     setValue(
       'otherFees',
-      values.otherFees.filter((fee) => fee.id !== id),
+      getValues('otherFees').filter((fee) => fee.id !== id),
     );
   };
 

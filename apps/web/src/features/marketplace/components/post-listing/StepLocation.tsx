@@ -21,7 +21,8 @@ import { cn } from '@/utils/cn';
  * ở màn hình đầu (chỗ dễ bỏ cuộc nhất).
  */
 export function StepLocation() {
-  const { register, setValue, watch, formState } = useFormContext<PostListingFormValues>();
+  const { register, setValue, getValues, watch, formState } =
+    useFormContext<PostListingFormValues>();
   const errors = formState.errors;
   const values = watch();
 
@@ -94,7 +95,7 @@ export function StepLocation() {
         label="Tiện ích xung quanh"
       >
         <NearbyPlacesInput
-          onChange={(next) => setValue('nearbyPlaces', next)}
+          onChange={(updater) => setValue('nearbyPlaces', updater(getValues('nearbyPlaces')))}
           value={values.nearbyPlaces}
         />
       </FormField>

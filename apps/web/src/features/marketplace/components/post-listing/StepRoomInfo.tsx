@@ -18,13 +18,17 @@ function formatThousands(raw: string) {
 }
 
 export function StepRoomInfo() {
-  const { register, setValue, watch, formState } = useFormContext<PostListingFormValues>();
+  const { register, setValue, getValues, watch, formState } =
+    useFormContext<PostListingFormValues>();
   const errors = formState.errors;
   const values = watch();
   const isRestricted = values.accessPolicy === 'Restricted';
 
   const toggleAmenity = (amenity: string) => {
-    const current = values.amenities;
+    // Đọc bằng `getValues` chứ không dùng mảng từ `watch`: mảng đó là ảnh chụp lúc render, nên
+    // bấm nhanh hai tiện ích trong cùng một khung hình sẽ khiến cả hai đọc cùng giá trị cũ và
+    // lựa chọn sau ghi đè lựa chọn trước.
+    const current = getValues('amenities');
     setValue(
       'amenities',
       current.includes(amenity)
