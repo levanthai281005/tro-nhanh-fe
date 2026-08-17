@@ -10,11 +10,7 @@ import {
   PROPERTY_TYPES,
   PROPERTY_TYPE_VALUE_BY_LABEL,
 } from '@/features/marketplace/constants/catalog';
-import {
-  FormField,
-  inputClassName,
-  inputErrorClassName,
-} from '@/features/marketplace/components/post-listing/FormField';
+import { FormField, inputClassName, inputErrorClassName } from '@/components/ui/FormField';
 import { PhotoUploader } from '@/features/marketplace/components/post-listing/PhotoUploader';
 import type { PostListingFormValues } from '@/features/marketplace/types/postListing';
 import { cn } from '@/utils/cn';

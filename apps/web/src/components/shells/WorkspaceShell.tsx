@@ -35,7 +35,16 @@ interface WorkspaceNavItem {
   Icon: LucideIcon;
 }
 
-const FREE_NAV: WorkspaceNavItem[] = [
+/**
+ * Link **cross-surface** — đích nằm ở Surface Marketplace, không phải màn SaaS.
+ *
+ * B4/B5 chạy trên `RentalListing`, miễn phí và không chịu gating, nên thuộc Marketplace
+ * (`SURFACES_AND_MODES.md` §2). Trước đây chúng nằm ngay trong sidebar dưới nhãn "Tin đăng —
+ * miễn phí", khiến một màn bị hai shell cùng nhận; khi Workspace tách sang
+ * `quanly.tronhanh.vn` thì đó là lỗi thật chứ không còn là chuyện thẩm mỹ. Giữ lại lối đi
+ * nhưng đặt đúng chỗ và ghi rõ là đang rời khỏi Workspace.
+ */
+const CROSS_SURFACE_NAV: WorkspaceNavItem[] = [
   { label: 'Tin đăng của tôi', href: '/tai-khoan/tin-cho-thue', Icon: FileText },
   { label: 'Đăng tin cho thuê', href: '/dang-tin-cho-thue', Icon: PlusCircle },
 ];
@@ -54,9 +63,7 @@ export function WorkspaceShell({
   trialDaysLeft = 30,
 }: WorkspaceShellProps) {
   const pathname = usePathname();
-  const mobileTitle = [...FREE_NAV, ...SAAS_NAV].find((item) =>
-    pathname.startsWith(item.href),
-  )?.label;
+  const mobileTitle = SAAS_NAV.find((item) => pathname.startsWith(item.href))?.label;
 
   return (
     <div className="flex min-h-screen bg-canvas">
@@ -101,12 +108,7 @@ function WorkspaceSidebar({
       </div>
 
       <nav className="flex flex-1 flex-col gap-[3px] overflow-y-auto px-3 py-3.5">
-        <NavGroupLabel>Tin đăng — miễn phí</NavGroupLabel>
-        {FREE_NAV.map((item) => (
-          <WorkspaceNavLink key={item.href} item={item} pathname={pathname} />
-        ))}
-
-        <NavGroupLabel className="mt-4">Quản lý vận hành — SaaS</NavGroupLabel>
+        <NavGroupLabel>Quản lý vận hành</NavGroupLabel>
         {SAAS_NAV.map((item) => (
           <WorkspaceNavLink
             key={item.href}
@@ -118,19 +120,29 @@ function WorkspaceSidebar({
       </nav>
 
       <div className="border-t border-line px-3 py-3.5">
+        <NavGroupLabel>Trên Trọ Nhanh</NavGroupLabel>
+        {CROSS_SURFACE_NAV.map((item) => (
+          <Link
+            key={item.href}
+            className="flex items-center gap-3 rounded-[10px] px-[13px] py-2 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas"
+            href={item.href}
+          >
+            <item.Icon aria-hidden="true" className="size-4" />
+            {item.label}
+          </Link>
+        ))}
         <Link
           className="flex items-center gap-3 rounded-[10px] px-[13px] py-2 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas"
-          href="/"
-        >
-          <Search aria-hidden="true" className="size-4" />
-          Về trang tìm phòng
-        </Link>
-        <Link
-          className="mt-1 flex items-center gap-3 rounded-[10px] px-[13px] py-2 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas"
           href="/tin-nhan"
         >
           <MessageSquare aria-hidden="true" className="size-4" />
           Tin nhắn
+        </Link>
+        <Link
+          className="mt-1 flex items-center gap-3 rounded-[10px] px-[13px] py-2 text-[13px] font-medium text-ink-muted transition-colors hover:bg-canvas"
+          href="/"
+        >
+          <Search aria-hidden="true" className="size-4" />← Về trang tìm phòng
         </Link>
       </div>
     </aside>

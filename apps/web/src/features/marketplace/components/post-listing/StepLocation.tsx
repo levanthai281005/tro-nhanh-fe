@@ -3,13 +3,13 @@
 import { useFormContext } from 'react-hook-form';
 import { AppSelect } from '@/components/ui/AppSelect';
 import { PROPERTY_TYPE_OPTIONS } from '@/features/marketplace/constants/catalog';
-import { AreaSelect } from '@/features/marketplace/components/post-listing/AreaSelect';
+import { AreaSelect } from '@/components/ui/AreaSelect';
 import {
   FieldBox,
   FormField,
   inputClassName,
   inputErrorClassName,
-} from '@/features/marketplace/components/post-listing/FormField';
+} from '@/components/ui/FormField';
 import { LocationPicker } from '@/features/marketplace/components/post-listing/LocationPicker';
 import { NearbyPlacesInput } from '@/features/marketplace/components/post-listing/NearbyPlacesInput';
 import type { PostListingFormValues } from '@/features/marketplace/types/postListing';

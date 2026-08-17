@@ -45,6 +45,7 @@ GET  /public/khu-tro/{slug}           (trang khu public + review)
 GET  /public/properties/{id}/reviews
 GET  /public/room-wanted-posts        GET /public/roommate-wanted-posts
 ## Cần đăng nhập
+GET  /me/context                      (Capability của phiên: roles[], workspaceStatus, residencyStatus, limits — SURFACES_AND_MODES.md §7)
 POST /marketplace/listings            (tạo đầu tiên → gán role Seller cùng transaction)
 PUT  /marketplace/listings/{id}       PATCH /marketplace/listings/{id}/status
 DELETE /marketplace/listings/{id}     (xóa mềm)
