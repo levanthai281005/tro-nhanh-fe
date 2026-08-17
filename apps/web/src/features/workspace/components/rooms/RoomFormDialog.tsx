@@ -1,15 +1,21 @@
 'use client';
 
-import { roomSchema, type RoomStatus } from '@tronhanh/schemas';
+import type { RoomStatus } from '@tronhanh/schemas';
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { FormField, inputClassName } from '@/components/ui/FormField';
+import { FormSection } from '@/components/ui/FormSection';
 import { ModalShell } from '@/components/ui/ModalShell';
 import { NumberField } from '@/components/ui/NumberField';
 import { WriteGuardButton } from '@/features/session/components/WriteGuardButton';
 import { RoomStatusPicker } from '@/features/workspace/components/rooms/RoomStatusPicker';
 import type { RoomWriteInput } from '@/features/workspace/services/roomsService';
 import type { RoomFormValues, RoomListItem } from '@/features/workspace/types/room';
+import {
+  toRoomFormValues,
+  validateRoomForm,
+  type RoomFormFieldErrors,
+} from '@/features/workspace/utils/roomForm';
 
 interface RoomFormDialogProps {
   propertyId: string;
@@ -28,42 +34,6 @@ interface RoomFormDialogProps {
   onSubmit: (input: RoomWriteInput) => void;
 }
 
-/** Lỗi theo từng ô — đặt ngay dưới ô sai thay vì dồn lên một banner ở đầu form. */
-type FieldErrors = Partial<Record<'roomCode' | 'floor' | 'area' | 'price', string>>;
-
-function toNumber(raw: string): number {
-  return Number(raw.replace(/\D/g, ''));
-}
-
-/**
- * Phân biệt "" (chưa khai, thừa hưởng giá khu) với "0" (miễn phí). Gộp hai ý này làm một là
- * cách chắc chắn nhất để hóa đơn ra sai số.
- */
-function toOptionalNumber(raw: string): number | null {
-  const digits = raw.replace(/\D/g, '');
-  return digits === '' ? null : Number(digits);
-}
-
-function toFormValues(propertyId: string, room: RoomListItem | null): RoomFormValues {
-  const hasCustomPricing =
-    room !== null &&
-    (room.electricityPrice !== null || room.waterPrice !== null || room.servicePrice !== null);
-
-  return {
-    propertyId,
-    roomCode: room?.roomCode ?? '',
-    floor: room ? String(room.floor) : '1',
-    area: room ? String(room.area) : '',
-    price: room ? String(room.price) : '',
-    status: room?.status ?? 'Available',
-    note: room?.note ?? '',
-    hasCustomPricing,
-    electricityPrice: room?.electricityPrice != null ? String(room.electricityPrice) : '',
-    waterPrice: room?.waterPrice != null ? String(room.waterPrice) : '',
-    servicePrice: room?.servicePrice != null ? String(room.servicePrice) : '',
-  };
-}
-
 export function RoomFormDialog({
   propertyId,
   propertyName,
@@ -73,8 +43,8 @@ export function RoomFormDialog({
   onClose,
   onSubmit,
 }: RoomFormDialogProps) {
-  const [values, setValues] = useState<RoomFormValues>(() => toFormValues(propertyId, room));
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [values, setValues] = useState<RoomFormValues>(() => toRoomFormValues(propertyId, room));
+  const [fieldErrors, setFieldErrors] = useState<RoomFormFieldErrors>({});
 
   const setField = <TKey extends keyof RoomFormValues>(key: TKey, value: RoomFormValues[TKey]) => {
     setValues((current) => ({ ...current, [key]: value }));
@@ -84,55 +54,13 @@ export function RoomFormDialog({
   };
 
   const handleSubmit = () => {
-    /*
-     * Ô để trống ≠ số 0, và schema thực thể không phân biệt được hai thứ đó.
-     *
-     * `roomPriceSchema` cố ý cho `price ≥ 0` vì phòng cho người nhà ở nhờ là dữ liệu hợp lệ.
-     * Nhưng `Number('')` ra `0`, nên bỏ trống ô giá sẽ **lặng lẽ** lưu phòng giá 0 đ/tháng —
-     * đúng thứ chảy thẳng xuống hóa đơn. Ràng buộc "phải khai" thuộc về form, không thuộc về
-     * thực thể, nên kiểm ở đây.
-     */
-    const blankFieldErrors: FieldErrors = {};
-    if (values.area.trim() === '') blankFieldErrors.area = 'Vui lòng nhập diện tích';
-    if (values.price.trim() === '') blankFieldErrors.price = 'Vui lòng nhập giá thuê';
-
-    const parsed = roomSchema.safeParse({
-      propertyId,
-      roomCode: values.roomCode,
-      floor: toNumber(values.floor),
-      area: toNumber(values.area),
-      price: toNumber(values.price),
-      status: values.status,
-      note: values.note,
-      electricityPrice: values.hasCustomPricing ? toOptionalNumber(values.electricityPrice) : null,
-      waterPrice: values.hasCustomPricing ? toOptionalNumber(values.waterPrice) : null,
-      servicePrice: values.hasCustomPricing ? toOptionalNumber(values.servicePrice) : null,
-    });
-
-    const schemaFieldErrors: FieldErrors = parsed.success
-      ? {}
-      : (() => {
-          const flattened = parsed.error.flatten().fieldErrors;
-          return {
-            roomCode: flattened.roomCode?.[0],
-            floor: flattened.floor?.[0],
-            area: flattened.area?.[0],
-            price: flattened.price?.[0],
-          };
-        })();
-
-    // Gộp cả hai nguồn rồi mới hiện, thay vì chặn sớm ở nhóm đầu: hiện lần lượt thì người
-    // dùng sửa một lỗi, bấm lại, lại gặp lỗi mới — mỗi vòng một lần bấm.
-    const merged: FieldErrors = { ...schemaFieldErrors, ...blankFieldErrors };
-    if (Object.values(merged).some(Boolean)) {
-      setFieldErrors(merged);
+    const result = validateRoomForm(propertyId, values);
+    if (!result.ok) {
+      setFieldErrors(result.errors);
       return;
     }
-
-    if (!parsed.success) return;
-
     setFieldErrors({});
-    onSubmit({ ...parsed.data, note: parsed.data.note ?? '' });
+    onSubmit(result.input);
   };
 
   return (
@@ -286,34 +214,5 @@ export function RoomFormDialog({
         </FormSection>
       </div>
     </ModalShell>
-  );
-}
-
-/**
- * Một nhóm trường có tiêu đề.
- *
- * Bản trước là một cột phẳng mười ô nhập liền nhau, không có chỗ nào cho mắt nghỉ nên người
- * dùng phải đọc từng nhãn mới biết form dài tới đâu. Chia nhóm cho thấy ngay hình dạng của
- * việc phải làm.
- */
-function FormSection({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="flex flex-col gap-3">
-      <div>
-        <h3 className="m-0 text-xs font-bold uppercase tracking-[0.05em] text-ink-muted">
-          {title}
-        </h3>
-        {description ? <p className="m-0 mt-1 text-[13px] text-ink-muted">{description}</p> : null}
-      </div>
-      {children}
-    </section>
   );
 }
