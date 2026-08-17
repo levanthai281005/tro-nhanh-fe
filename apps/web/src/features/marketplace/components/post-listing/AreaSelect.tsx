@@ -3,6 +3,7 @@
 import { loadVnWards, VN_PROVINCES, type VnWard } from '@tronhanh/constants';
 import { useEffect, useMemo, useState } from 'react';
 import { AppSelect, type SelectOption } from '@/components/ui/AppSelect';
+import { FieldBox } from '@/features/marketplace/components/post-listing/FormField';
 
 /**
  * Chọn khu vực theo mô hình hành chính 2 cấp (tỉnh/thành → phường/xã, áp dụng từ 01/07/2025;
@@ -90,25 +91,27 @@ export function AreaSelect({ value, onChange, hasError }: AreaSelectProps) {
 
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-      <AppSelect
-        className={hasError && !value.provinceCode ? 'border-error' : undefined}
-        data-testid="area-province"
-        onChange={selectProvince}
-        options={provinceOptions}
-        placeholder="Chọn tỉnh/thành"
-        searchable
-        value={value.provinceCode}
-      />
-      <AppSelect
-        className={hasError && !value.wardCode ? 'border-error' : undefined}
-        data-testid="area-ward"
-        emptyText={value.provinceCode ? 'Không tìm thấy phường/xã' : 'Chọn tỉnh/thành trước'}
-        onChange={selectWard}
-        options={wardOptions}
-        placeholder={wards ? 'Chọn phường/xã' : 'Đang tải danh sách...'}
-        searchable
-        value={value.wardCode}
-      />
+      <FieldBox hasError={hasError && !value.provinceCode}>
+        <AppSelect
+          data-testid="area-province"
+          onChange={selectProvince}
+          options={provinceOptions}
+          placeholder="Chọn tỉnh/thành"
+          searchable
+          value={value.provinceCode}
+        />
+      </FieldBox>
+      <FieldBox hasError={hasError && !value.wardCode}>
+        <AppSelect
+          data-testid="area-ward"
+          emptyText={value.provinceCode ? 'Không tìm thấy phường/xã' : 'Chọn tỉnh/thành trước'}
+          onChange={selectWard}
+          options={wardOptions}
+          placeholder={wards ? 'Chọn phường/xã' : 'Đang tải danh sách...'}
+          searchable
+          value={value.wardCode}
+        />
+      </FieldBox>
     </div>
   );
 }

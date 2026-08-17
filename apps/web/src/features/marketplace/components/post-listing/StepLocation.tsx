@@ -5,6 +5,7 @@ import { AppSelect } from '@/components/ui/AppSelect';
 import { PROPERTY_TYPE_OPTIONS } from '@/features/marketplace/constants/catalog';
 import { AreaSelect } from '@/features/marketplace/components/post-listing/AreaSelect';
 import {
+  FieldBox,
   FormField,
   inputClassName,
   inputErrorClassName,
@@ -34,12 +35,14 @@ export function StepLocation() {
       </header>
 
       <FormField error={errors.propertyType?.message} isRequired label="Loại hình cho thuê">
-        <AppSelect
-          data-testid="field-property-type"
-          onChange={(next) => setValue('propertyType', next as RentalPropertyType)}
-          options={[...PROPERTY_TYPE_OPTIONS]}
-          value={values.propertyType}
-        />
+        <FieldBox>
+          <AppSelect
+            data-testid="field-property-type"
+            onChange={(next) => setValue('propertyType', next as RentalPropertyType)}
+            options={[...PROPERTY_TYPE_OPTIONS]}
+            value={values.propertyType}
+          />
+        </FieldBox>
       </FormField>
 
       <FormField
