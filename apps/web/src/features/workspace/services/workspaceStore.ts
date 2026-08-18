@@ -1,7 +1,9 @@
+import type { Contract } from '@/features/workspace/types/contract';
 import type { Occupancy } from '@/features/workspace/types/occupancy';
 import { isActiveOccupancy } from '@/features/workspace/types/occupancy';
 import type { Property } from '@/features/workspace/types/property';
 import type { Room, RoomListItem } from '@/features/workspace/types/room';
+import { MOCK_CONTRACTS } from '@/features/workspace/constants/mockContracts';
 import { MOCK_OCCUPANCIES } from '@/features/workspace/constants/mockOccupancies';
 import { MOCK_PROPERTIES, MOCK_ROOMS } from '@/features/workspace/constants/mockWorkspaceData';
 
@@ -21,6 +23,7 @@ interface StoredRoom extends Room {
 const properties = new Map<string, Property>(MOCK_PROPERTIES.map((item) => [item.id, item]));
 const rooms = new Map<string, StoredRoom>(MOCK_ROOMS.map((item) => [item.id, item]));
 const occupancies = new Map<string, Occupancy>(MOCK_OCCUPANCIES.map((item) => [item.id, item]));
+const contracts = new Map<string, Contract>(MOCK_CONTRACTS.map((item) => [item.id, item]));
 
 /**
  * Ghép người ở đang hoạt động vào phòng.
@@ -136,4 +139,29 @@ export function saveOccupancy(occupancy: Occupancy): void {
 /** Id tạm cho bản ghi tạo trong phiên demo. Backend thật sinh uuid của nó. */
 export function createLocalId(): string {
   return crypto.randomUUID();
+}
+
+// ── Contract ────────────────────────────────────────────────────────────────────────────
+
+/** Mọi hợp đồng của phòng, mới nhất trước. */
+export function listContracts(roomId: string): Contract[] {
+  return [...contracts.values()]
+    .filter((item) => item.roomId === roomId)
+    .sort((left, right) => right.startDate.localeCompare(left.startDate));
+}
+
+/** Hợp đồng của toàn bộ khu thuộc một seller — nguồn cho màn danh sách B11. */
+export function listContractsBySeller(sellerId: string): Contract[] {
+  const ownedRoomIds = new Set(listRoomsBySeller(sellerId).map((room) => room.id));
+  return [...contracts.values()]
+    .filter((item) => ownedRoomIds.has(item.roomId))
+    .sort((left, right) => right.startDate.localeCompare(left.startDate));
+}
+
+export function findContract(contractId: string): Contract | undefined {
+  return contracts.get(contractId);
+}
+
+export function saveContract(contract: Contract): void {
+  contracts.set(contract.id, contract);
 }
