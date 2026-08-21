@@ -3,7 +3,17 @@
 **File sống — cập nhật sau mỗi nhánh hoàn thành.** Agent đọc file này đầu tiên để biết đang
 ở đâu, tránh làm lại việc đã xong hoặc làm nhầm thứ tự.
 
-Cập nhật lần cuối: sau khi hoàn thành nhánh port `SavedListingsPage` (trang chuẩn vàng).
+Cập nhật lần cuối: sau khi merge **B11 hợp đồng** (PR #19). `feat/rebuild` đang ở `4ba10f7`.
+
+**Bắt đầu phiên mới:** đọc mục "Đang làm" bên dưới. Khu Workspace đã có 6 route chạy được:
+`/chu-tro/khu-tro` (B6) · `/chu-tro/khu-tro/{id}` (B7) · `/chu-tro/khu-tro/{id}/phong` (B8) ·
+`/chu-tro/phong/{id}/nguoi-o` (B10) · `/chu-tro/hop-dong` (B11). Mục nav chưa dựng thì hiện
+nhãn "sắp có" chứ không dẫn tới 404 — dựng xong màn nào thì bật cờ `isReady` của màn đó
+trong `WorkspaceShell.tsx`.
+
+**Ba file phải đọc trước khi làm màn Workspace tiếp theo:** `business/SURFACES_AND_MODES.md`
+(gating và ranh giới Surface), `business/BUSINESS_RULES.md` (mã BR liên quan), và mục
+"Cạm bẫy đã gặp" cuối file này — phần lớn là lỗi chỉ lộ ra khi bấm thật trên trình duyệt.
 
 ---
 
