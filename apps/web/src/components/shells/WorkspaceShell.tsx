@@ -64,7 +64,7 @@ const CROSS_SURFACE_NAV: WorkspaceNavItem[] = [
 const SAAS_NAV: WorkspaceNavItem[] = [
   { label: 'Tổng quan', href: '/chu-tro/tong-quan', Icon: LayoutDashboard }, // B3
   { label: 'Khu trọ & Phòng', href: '/chu-tro/khu-tro', Icon: Building2, isReady: true }, // B6/B8
-  { label: 'Người ở & Hợp đồng', href: '/chu-tro/hop-dong', Icon: FileSignature }, // B11
+  { label: 'Người ở & Hợp đồng', href: '/chu-tro/hop-dong', Icon: FileSignature, isReady: true }, // B11
   { label: 'Hóa đơn & Thanh toán', href: '/chu-tro/hoa-don', Icon: ReceiptText }, // B12
   { label: 'Gói dịch vụ', href: '/chu-tro/goi-dich-vu', Icon: Package }, // B15
 ];

@@ -171,12 +171,21 @@ ngày — cần lâu hơn thì chia nhỏ.
       - Tách khỏi hợp đồng: B10 chỉ thêm/kết thúc người ở và chỉ định đại diện. Tạo Contract
         (kéo theo đổi `Room.status`, chặn chồng lấn) để B11.
 
+- [x] **B11 hợp đồng** — `feat/port-contract`, route `/chu-tro/hop-dong`
+      - Danh sách hợp đồng của **toàn bộ khu**, lọc theo trạng thái, cảnh báo sắp hết hạn
+        (30 ngày) và quá hạn chưa xử lý.
+      - **BR-006** — form tạo chỉ hiện phòng đã có người ở và chưa có hợp đồng Active; service
+        chặn chồng lấn bằng `hasDateRangeOverlap` (khoảng **đóng hai đầu** — kết thúc 31/12 và
+        bắt đầu 31/12 là chồng lấn).
+      - **BR-031** — tạo hợp đồng Active đổi `Room.status` sang `Rented`; chấm dứt thì phòng
+        **giữ nguyên** trạng thái (chủ trọ có thể đang dọn/sửa), dialog nói rõ còn một bước nữa.
+      - Upload scan hợp đồng (BR-008) **hoãn** — cần private bucket + signed URL từ backend.
+
 ### Đang làm
 
-- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B11 hợp đồng (đã có người đại
-      diện để gắn), rồi B12 hóa đơn, B9 chi tiết phòng, B3 dashboard.
-      **B3 để gần cuối** — 4/5 nhóm số của nó lấy từ Contract/Invoice/Payment; làm sớm thì
-      phần lớn là số bịa và phải viết lại.
+- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B12 hóa đơn (đã có hợp đồng
+      làm căn cứ, và VietQR đã dựng ở B7), rồi B9 chi tiết phòng, B3 dashboard.
+      **B3 để gần cuối** — 4/5 nhóm số của nó lấy từ Contract/Invoice/Payment.
 - [ ] Nút **"Tạo tin từ phòng"** (điểm nối Room → RentalListing) — chưa làm: B5 chưa đọc
       `?roomId=` để prefill. Badge "Có tin đang chạy" thì đã có. Làm thành nhánh riêng chạm
       cả hai feature.
@@ -259,6 +268,14 @@ bản đồ dời, ghim văng ra ngoài khung và trông như không có gì x�
 **Chỉ một file được chạm thư viện bản đồ.** Mọi nơi đi qua `ListingLocationMap`; phần Leaflet
 nằm sau `LeafletMap`. Cùng nguyên tắc với `loadVnWards()` cho dữ liệu hành chính — đổi nhà
 cung cấp sau này chỉ sửa một file.
+
+**Truyền `propertyId` xuống hook để invalidate là cái bẫy im lặng.** Màn danh sách hợp đồng
+trải khắp các khu nên luôn truyền `undefined`, và lưới phòng **không bao giờ** được nạp lại —
+BR-031 đổi `Room.status` mà màn phòng vẫn hiện trạng thái cũ. Khi không biết trước phạm vi,
+invalidate cả nhánh key (`ROOM_QUERY_KEYS.all`).
+
+**Đo bằng full reload thì kho mock reset, không kết luận được gì.** Kiểm mutation phải điều
+hướng bằng **link trong app** (client-side), không `location.href`.
 
 **`endDate` là ngày BẮT ĐẦU không còn ở, không phải ngày ở cuối cùng.** Dùng `endDate >= today`
 để tính "đang ở" thì chủ trọ bấm "Kết thúc ở", chọn hôm nay, rồi thấy người đó vẫn nằm ở mục

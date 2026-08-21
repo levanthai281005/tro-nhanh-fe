@@ -16,3 +16,10 @@ export const OCCUPANCY_QUERY_KEYS = {
   all: ['workspace', 'occupancies'] as const,
   byRoom: (roomId: string) => [...OCCUPANCY_QUERY_KEYS.all, 'by-room', roomId] as const,
 };
+
+export const CONTRACT_QUERY_KEYS = {
+  all: ['workspace', 'contracts'] as const,
+  bySeller: (sellerId: string | undefined) =>
+    [...CONTRACT_QUERY_KEYS.all, 'by-seller', sellerId ?? 'guest'] as const,
+  detail: (contractId: string) => [...CONTRACT_QUERY_KEYS.all, 'detail', contractId] as const,
+};
