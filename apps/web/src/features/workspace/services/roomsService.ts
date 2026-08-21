@@ -43,6 +43,12 @@ export async function getRoomsByProperty(propertyId: string): Promise<RoomsResul
   return { items, counts: toCounts(items) };
 }
 
+// TODO: nối API thật khi packages/types sinh xong: GET /management/rooms/{id}.
+export async function getRoomById(roomId: string): Promise<RoomListItem | null> {
+  await waitForMockRequest();
+  return findRoom(roomId) ?? null;
+}
+
 /**
  * `roomCode` phải unique trong phạm vi một khu (VALIDATION_RULES).
  *

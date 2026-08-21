@@ -1,5 +1,8 @@
+import type { Occupancy } from '@/features/workspace/types/occupancy';
+import { isActiveOccupancy } from '@/features/workspace/types/occupancy';
 import type { Property } from '@/features/workspace/types/property';
-import type { RoomListItem } from '@/features/workspace/types/room';
+import type { Room, RoomListItem } from '@/features/workspace/types/room';
+import { MOCK_OCCUPANCIES } from '@/features/workspace/constants/mockOccupancies';
 import { MOCK_PROPERTIES, MOCK_ROOMS } from '@/features/workspace/constants/mockWorkspaceData';
 
 /**
@@ -10,8 +13,24 @@ import { MOCK_PROPERTIES, MOCK_ROOMS } from '@/features/workspace/constants/mock
  * đổi số liệu trên thẻ khu).
  */
 
+interface StoredRoom extends Room {
+  hasActiveListing: boolean;
+  hasActiveContract: boolean;
+}
+
 const properties = new Map<string, Property>(MOCK_PROPERTIES.map((item) => [item.id, item]));
-const rooms = new Map<string, RoomListItem>(MOCK_ROOMS.map((item) => [item.id, item]));
+const rooms = new Map<string, StoredRoom>(MOCK_ROOMS.map((item) => [item.id, item]));
+const occupancies = new Map<string, Occupancy>(MOCK_OCCUPANCIES.map((item) => [item.id, item]));
+
+/**
+ * Ghép người ở đang hoạt động vào phòng.
+ *
+ * `Occupancy` là bảng riêng — cùng hình dạng với DB thật, và là điều kiện để B10 sửa được
+ * người ở mà không phải lôi cả bản ghi phòng ra ghi lại.
+ */
+function toRoomListItem(room: StoredRoom): RoomListItem {
+  return { ...room, occupants: listActiveOccupancies(room.id) };
+}
 
 const MOCK_REQUEST_DELAY_MS = 180;
 
@@ -50,24 +69,68 @@ export function removeProperty(propertyId: string): void {
 }
 
 export function listRooms(propertyId: string): RoomListItem[] {
-  return [...rooms.values()].filter((item) => item.propertyId === propertyId);
+  return [...rooms.values()].filter((item) => item.propertyId === propertyId).map(toRoomListItem);
 }
 
 export function listRoomsBySeller(sellerId: string): RoomListItem[] {
   const ownedIds = new Set(listProperties(sellerId).map((item) => item.id));
-  return [...rooms.values()].filter((item) => ownedIds.has(item.propertyId));
+  return [...rooms.values()].filter((item) => ownedIds.has(item.propertyId)).map(toRoomListItem);
 }
 
 export function findRoom(roomId: string): RoomListItem | undefined {
-  return rooms.get(roomId);
+  const room = rooms.get(roomId);
+  return room ? toRoomListItem(room) : undefined;
 }
 
 export function saveRoom(room: RoomListItem): void {
-  rooms.set(room.id, room);
+  // Chép tường minh các cột của phòng: `occupants` là dữ liệu ghép lúc đọc chứ không phải cột,
+  // lưu kèm thì có hai bản của cùng một sự thật và chúng sẽ lệch nhau.
+  rooms.set(room.id, {
+    id: room.id,
+    propertyId: room.propertyId,
+    roomCode: room.roomCode,
+    floor: room.floor,
+    area: room.area,
+    price: room.price,
+    status: room.status,
+    note: room.note,
+    electricityPrice: room.electricityPrice,
+    waterPrice: room.waterPrice,
+    servicePrice: room.servicePrice,
+    createdAt: room.createdAt,
+    updatedAt: room.updatedAt,
+    hasActiveListing: room.hasActiveListing,
+    hasActiveContract: room.hasActiveContract,
+  });
 }
 
 export function removeRoom(roomId: string): void {
   rooms.delete(roomId);
+  for (const item of listOccupancies(roomId)) {
+    occupancies.delete(item.id);
+  }
+}
+
+// ── Occupancy ───────────────────────────────────────────────────────────────────────────
+
+/** Mọi bản ghi của phòng, kể cả đã kết thúc. Mới nhất trước. */
+export function listOccupancies(roomId: string): Occupancy[] {
+  return [...occupancies.values()]
+    .filter((item) => item.roomId === roomId)
+    .sort((left, right) => right.startDate.localeCompare(left.startDate));
+}
+
+/** Chỉ người đang ở — dùng để ghép vào phòng và đếm số khách. */
+export function listActiveOccupancies(roomId: string): Occupancy[] {
+  return listOccupancies(roomId).filter((item) => isActiveOccupancy(item));
+}
+
+export function findOccupancy(occupancyId: string): Occupancy | undefined {
+  return occupancies.get(occupancyId);
+}
+
+export function saveOccupancy(occupancy: Occupancy): void {
+  occupancies.set(occupancy.id, occupancy);
 }
 
 /** Id tạm cho bản ghi tạo trong phiên demo. Backend thật sinh uuid của nó. */
