@@ -23,3 +23,18 @@ export const CONTRACT_QUERY_KEYS = {
     [...CONTRACT_QUERY_KEYS.all, 'by-seller', sellerId ?? 'guest'] as const,
   detail: (contractId: string) => [...CONTRACT_QUERY_KEYS.all, 'detail', contractId] as const,
 };
+
+export const UTILITY_QUERY_KEYS = {
+  all: ['workspace', 'utility-readings'] as const,
+  byPeriod: (sellerId: string | undefined, propertyId: string, period: string) =>
+    [...UTILITY_QUERY_KEYS.all, sellerId ?? 'guest', propertyId, period] as const,
+};
+
+export const INVOICE_QUERY_KEYS = {
+  all: ['workspace', 'invoices'] as const,
+  bySeller: (sellerId: string | undefined) =>
+    [...INVOICE_QUERY_KEYS.all, 'by-seller', sellerId ?? 'guest'] as const,
+  /** Phòng đủ điều kiện xuất hóa đơn cho một kỳ — phụ thuộc kỳ nên kỳ nằm trong key. */
+  roomOptions: (sellerId: string | undefined, period: string) =>
+    [...INVOICE_QUERY_KEYS.all, 'room-options', sellerId ?? 'guest', period] as const,
+};

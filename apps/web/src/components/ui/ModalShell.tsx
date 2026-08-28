@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import { useEffect, useId, type MouseEvent, type ReactNode } from 'react';
+import { cn } from '@/utils/cn';
 
 export interface ModalShellProps {
   title: string;
@@ -9,7 +10,29 @@ export interface ModalShellProps {
   children: ReactNode;
   footer: ReactNode;
   variant?: 'dialog' | 'bottom-sheet';
+  /**
+   * `lg` cho nội dung có **hai cột** trên màn rộng — chi tiết hóa đơn đặt danh sách khoản thu
+   * cạnh mã VietQR. Ở khổ mặc định hai cột đó bị ép xuống còn ~200px mỗi bên và số tiền xuống
+   * dòng giữa chừng.
+   */
+  size?: 'md' | 'lg';
 }
+
+/**
+ * Viết đủ cả hai biến thể thay vì ghép chuỗi `md:${...}`.
+ *
+ * Tailwind quét mã nguồn bằng văn bản: class dựng bằng nội suy chuỗi không bao giờ được sinh ra
+ * CSS, mà build vẫn xanh và typecheck vẫn xanh — chỉ có modal là đột nhiên rộng hết màn hình.
+ */
+const SIZE_CLASSES: Record<'md' | 'lg', string> = {
+  md: 'max-w-[460px]',
+  lg: 'max-w-[680px]',
+};
+
+const SHEET_SIZE_CLASSES: Record<'md' | 'lg', string> = {
+  md: 'md:max-w-[460px]',
+  lg: 'md:max-w-[680px]',
+};
 
 export function ModalShell({
   title,
@@ -17,6 +40,7 @@ export function ModalShell({
   children,
   footer,
   variant = 'dialog',
+  size = 'md',
 }: ModalShellProps) {
   const titleId = useId();
 
@@ -43,11 +67,12 @@ export function ModalShell({
       role="dialog"
     >
       <div
-        className={
+        className={cn(
           variant === 'bottom-sheet'
-            ? 'flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-[20px] bg-surface shadow-2xl md:max-w-[460px] md:rounded-[18px]'
-            : 'max-h-[90vh] w-full max-w-[460px] overflow-y-auto rounded-[18px] bg-surface shadow-2xl'
-        }
+            ? 'flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-[20px] bg-surface shadow-2xl md:rounded-[18px]'
+            : 'max-h-[90vh] w-full overflow-y-auto rounded-[18px] bg-surface shadow-2xl',
+          variant === 'bottom-sheet' ? SHEET_SIZE_CLASSES[size] : SIZE_CLASSES[size],
+        )}
         onClick={stopPropagation}
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-5">
