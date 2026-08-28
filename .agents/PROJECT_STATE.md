@@ -3,9 +3,11 @@
 **File sống — cập nhật sau mỗi nhánh hoàn thành.** Agent đọc file này đầu tiên để biết đang
 ở đâu, tránh làm lại việc đã xong hoặc làm nhầm thứ tự.
 
-Cập nhật lần cuối: sau khi dựng **B12 điện nước & hóa đơn**. Code đang nằm **chưa commit** trên
-`chore/handoff-project-state` — cần tách sang `feat/workspace-billing` trước khi mở PR về
-`feat/rebuild`. Trước đó: merge **B11 hợp đồng** (PR #19), `feat/rebuild` ở `4ba10f7`.
+Cập nhật lần cuối: sau khi dựng **B12 điện nước & hóa đơn** — đã commit trên
+`feat/workspace-billing`, **chưa push, chưa mở PR** về `feat/rebuild`. Nhánh này tách từ
+`chore/handoff-project-state` (không tách từ `feat/rebuild`, vì phần sửa PROJECT_STATE nằm
+chồng lên commit docs của nhánh đó) nên mang theo một commit docs nhỏ. Trước đó: merge
+**B11 hợp đồng** (PR #19), `feat/rebuild` ở `4ba10f7`.
 
 **Bắt đầu phiên mới:** đọc mục "Đang làm" bên dưới. Khu Workspace đã có 6 route chạy được:
 `/chu-tro/khu-tro` (B6) · `/chu-tro/khu-tro/{id}` (B7) · `/chu-tro/khu-tro/{id}/phong` (B8) ·
@@ -194,7 +196,7 @@ ngày — cần lâu hơn thì chia nhỏ.
         **giữ nguyên** trạng thái (chủ trọ có thể đang dọn/sửa), dialog nói rõ còn một bước nữa.
       - Upload scan hợp đồng (BR-008) **hoãn** — cần private bucket + signed URL từ backend.
 
-- [x] **B12 điện nước & hóa đơn** — route `/chu-tro/hoa-don` (chưa commit, xem đầu file)
+- [x] **B12 điện nước & hóa đơn** — `feat/workspace-billing`, route `/chu-tro/hoa-don`
       - **Một màn hai tab** vì đây là một chuỗi liên tục: ghi chỉ số cuối kỳ rồi xuất hóa đơn
         ngay từ chính những số vừa ghi. Tách hai route sẽ bắt chủ trọ đi vòng cho một lần chốt sổ.
       - **Ghi chỉ số theo BẢNG cả khu**, không phải modal từng phòng như prototype — khu hai
