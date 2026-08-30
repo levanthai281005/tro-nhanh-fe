@@ -1,10 +1,14 @@
 import type { Contract } from '@/features/workspace/types/contract';
+import type { Invoice, Payment } from '@/features/workspace/types/invoice';
 import type { Occupancy } from '@/features/workspace/types/occupancy';
 import { isActiveOccupancy } from '@/features/workspace/types/occupancy';
 import type { Property } from '@/features/workspace/types/property';
 import type { Room, RoomListItem } from '@/features/workspace/types/room';
+import type { UtilityReading } from '@/features/workspace/types/utilityReading';
 import { MOCK_CONTRACTS } from '@/features/workspace/constants/mockContracts';
+import { MOCK_INVOICES, MOCK_PAYMENTS } from '@/features/workspace/constants/mockInvoices';
 import { MOCK_OCCUPANCIES } from '@/features/workspace/constants/mockOccupancies';
+import { MOCK_UTILITY_READINGS } from '@/features/workspace/constants/mockUtilityReadings';
 import { MOCK_PROPERTIES, MOCK_ROOMS } from '@/features/workspace/constants/mockWorkspaceData';
 
 /**
@@ -24,6 +28,11 @@ const properties = new Map<string, Property>(MOCK_PROPERTIES.map((item) => [item
 const rooms = new Map<string, StoredRoom>(MOCK_ROOMS.map((item) => [item.id, item]));
 const occupancies = new Map<string, Occupancy>(MOCK_OCCUPANCIES.map((item) => [item.id, item]));
 const contracts = new Map<string, Contract>(MOCK_CONTRACTS.map((item) => [item.id, item]));
+const utilityReadings = new Map<string, UtilityReading>(
+  MOCK_UTILITY_READINGS.map((item) => [item.id, item]),
+);
+const invoices = new Map<string, Invoice>(MOCK_INVOICES.map((item) => [item.id, item]));
+const payments = new Map<string, Payment>(MOCK_PAYMENTS.map((item) => [item.id, item]));
 
 /**
  * Ghép người ở đang hoạt động vào phòng.
@@ -164,4 +173,79 @@ export function findContract(contractId: string): Contract | undefined {
 
 export function saveContract(contract: Contract): void {
   contracts.set(contract.id, contract);
+}
+
+// ── UtilityReading ──────────────────────────────────────────────────────────────────────
+
+/** Mọi chỉ số của một phòng, kỳ mới nhất trước. */
+export function listUtilityReadings(roomId: string): UtilityReading[] {
+  return [...utilityReadings.values()]
+    .filter((item) => item.roomId === roomId)
+    .sort((left, right) => right.period.localeCompare(left.period));
+}
+
+export function findUtilityReading(
+  roomId: string,
+  type: UtilityReading['type'],
+  period: string,
+): UtilityReading | undefined {
+  return [...utilityReadings.values()].find(
+    (item) => item.roomId === roomId && item.type === type && item.period === period,
+  );
+}
+
+/**
+ * Chỉ số cuối của **kỳ liền trước**, không phải bản ghi tạo gần nhất.
+ *
+ * Prototype lấy `order by created_at desc limit 1`. Chỉ cần ghi bù một kỳ cũ sau khi đã ghi kỳ
+ * mới là "chỉ số cũ" trả về số của tương lai, và số tiêu thụ ra âm — mà chẳng có lỗi nào hiện
+ * lên. Kỳ là chuỗi `YYYY-MM` nên so sánh chuỗi là so sánh đúng thứ tự thời gian.
+ */
+export function findPreviousUtilityReading(
+  roomId: string,
+  type: UtilityReading['type'],
+  period: string,
+): UtilityReading | undefined {
+  return listUtilityReadings(roomId)
+    .filter((item) => item.type === type && item.period < period)
+    .at(0);
+}
+
+export function saveUtilityReading(reading: UtilityReading): void {
+  utilityReadings.set(reading.id, reading);
+}
+
+// ── Invoice · Payment ───────────────────────────────────────────────────────────────────
+
+export function listInvoicesBySeller(sellerId: string): Invoice[] {
+  const ownedRoomIds = new Set(listRoomsBySeller(sellerId).map((room) => room.id));
+  return [...invoices.values()]
+    .filter((item) => ownedRoomIds.has(item.roomId))
+    .sort(
+      (left, right) =>
+        right.period.localeCompare(left.period) || right.createdAt.localeCompare(left.createdAt),
+    );
+}
+
+/** Hóa đơn của một hợp đồng — nguồn kiểm unique (contractId, period). */
+export function listInvoicesByContract(contractId: string): Invoice[] {
+  return [...invoices.values()].filter((item) => item.contractId === contractId);
+}
+
+export function findInvoice(invoiceId: string): Invoice | undefined {
+  return invoices.get(invoiceId);
+}
+
+export function saveInvoice(invoice: Invoice): void {
+  invoices.set(invoice.id, invoice);
+}
+
+export function listPayments(invoiceId: string): Payment[] {
+  return [...payments.values()]
+    .filter((item) => item.invoiceId === invoiceId)
+    .sort((left, right) => left.paidAt.localeCompare(right.paidAt));
+}
+
+export function savePayment(payment: Payment): void {
+  payments.set(payment.id, payment);
 }

@@ -19,3 +19,37 @@ video,
 canvas {
   max-width: 100%;
 }
+
+/**
+ * Chế độ in — dùng cho bản hóa đơn giấy (B12).
+ *
+ * Chọn theo thuộc tính `data-print-area` chứ không theo class riêng: ESLint bật
+ * `tailwindcss/no-custom-classname` ở mức error, nên mọi class tự đặt đều bị chặn — và đó là
+ * hàng rào duy nhất bắt được class Tailwind gõ sai, không nên nới ra vì một trường hợp.
+ *
+ * Dùng `visibility` chứ không `display`: `display: none` trên tổ tiên sẽ giấu luôn phần con dù
+ * có bật lại, còn `visibility` thì con bật lại được. Nhờ vậy hóa đơn nằm sâu trong modal vẫn
+ * in ra được mà không phải nhấc nó ra khỏi cây DOM.
+ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  [data-print-area],
+  [data-print-area] * {
+    visibility: visible;
+  }
+
+  [data-print-area] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0;
+  }
+
+  [data-print-hidden] {
+    display: none !important;
+  }
+}

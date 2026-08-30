@@ -3,7 +3,22 @@
 **File sống — cập nhật sau mỗi nhánh hoàn thành.** Agent đọc file này đầu tiên để biết đang
 ở đâu, tránh làm lại việc đã xong hoặc làm nhầm thứ tự.
 
-Cập nhật lần cuối: sau khi hoàn thành nhánh port `SavedListingsPage` (trang chuẩn vàng).
+Cập nhật lần cuối: sau khi dựng **B12 điện nước & hóa đơn** — đã commit trên
+`feat/workspace-billing`, **chưa push, chưa mở PR** về `feat/rebuild`. Nhánh này tách từ
+`chore/handoff-project-state` (không tách từ `feat/rebuild`, vì phần sửa PROJECT_STATE nằm
+chồng lên commit docs của nhánh đó) nên mang theo một commit docs nhỏ. Trước đó: merge
+**B11 hợp đồng** (PR #19), `feat/rebuild` ở `4ba10f7`.
+
+**Bắt đầu phiên mới:** đọc mục "Đang làm" bên dưới. Khu Workspace đã có 6 route chạy được:
+`/chu-tro/khu-tro` (B6) · `/chu-tro/khu-tro/{id}` (B7) · `/chu-tro/khu-tro/{id}/phong` (B8) ·
+`/chu-tro/phong/{id}/nguoi-o` (B10) · `/chu-tro/hop-dong` (B11) · `/chu-tro/hoa-don` (B12).
+Mục nav chưa dựng thì hiện
+nhãn "sắp có" chứ không dẫn tới 404 — dựng xong màn nào thì bật cờ `isReady` của màn đó
+trong `WorkspaceShell.tsx`.
+
+**Ba file phải đọc trước khi làm màn Workspace tiếp theo:** `business/SURFACES_AND_MODES.md`
+(gating và ranh giới Surface), `business/BUSINESS_RULES.md` (mã BR liên quan), và mục
+"Cạm bẫy đã gặp" cuối file này — phần lớn là lỗi chỉ lộ ra khi bấm thật trên trình duyệt.
 
 ---
 
@@ -181,11 +196,31 @@ ngày — cần lâu hơn thì chia nhỏ.
         **giữ nguyên** trạng thái (chủ trọ có thể đang dọn/sửa), dialog nói rõ còn một bước nữa.
       - Upload scan hợp đồng (BR-008) **hoãn** — cần private bucket + signed URL từ backend.
 
+- [x] **B12 điện nước & hóa đơn** — `feat/workspace-billing`, route `/chu-tro/hoa-don`
+      - **Một màn hai tab** vì đây là một chuỗi liên tục: ghi chỉ số cuối kỳ rồi xuất hóa đơn
+        ngay từ chính những số vừa ghi. Tách hai route sẽ bắt chủ trọ đi vòng cho một lần chốt sổ.
+      - **Ghi chỉ số theo BẢNG cả khu**, không phải modal từng phòng như prototype — khu hai
+        mươi phòng thì đó là hai mươi lần mở–gõ–lưu–đóng, trong khi việc thật là cầm sổ đi một
+        vòng rồi nhập một lượt. Số tiền hiện ngay khi gõ.
+      - **Hóa đơn bắt buộc gắn Contract** (`unique (contractId, period)` trong `DATA_ENTITIES`).
+        Phòng chưa có hợp đồng Active thì không xuất được, UI nói rõ lý do.
+      - **Tiền thuê lấy từ `Contract.rentPrice`, KHÔNG lấy `Room.price`** — hợp đồng là căn cứ
+        pháp lý; phòng đã tăng giá sau ngày ký thì lấy giá phòng là thu sai số tiền.
+      - **BR-004 do service suy, không phải component tính.** `deriveInvoiceStatus` nằm trong
+        `invoicesService` đóng vai backend, có ghi `// XÓA khi nối API thật`.
+      - **`packages/utils/src/invoiceNote.ts` + 7 test** — đóng lại cạm bẫy 25 ký tự VietQR:
+        rút gọn theo thang bậc có định nghĩa, và **không bao giờ cắt kỳ** (cắt mã phòng thay).
+      - Thêm `packages/schemas/src/invoice.ts` (4 enum + 4 schema thực thể).
+      - `ModalShell` có thêm `size="lg"` cho nội dung hai cột (khoản thu cạnh mã VietQR).
+      - **Hoãn:** gửi in-app thật (cần A11 hộp thư + `Notification`) — thay bằng đánh dấu đã
+        gửi + bản in qua `window.print()`. B18 duyệt chỉ số từ người ở (BR-033) và B13 route
+        chi tiết riêng cũng để sau; chi tiết hóa đơn hiện là modal.
+
 ### Đang làm
 
-- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B12 hóa đơn (đã có hợp đồng
-      làm căn cứ, và VietQR đã dựng ở B7), rồi B9 chi tiết phòng, B3 dashboard.
-      **B3 để gần cuối** — 4/5 nhóm số của nó lấy từ Contract/Invoice/Payment.
+- [ ] **Giai đoạn 4 — phần còn lại của Workspace.** Kế tiếp: B9 chi tiết phòng, rồi B3
+      dashboard. **B3 để gần cuối** — 4/5 nhóm số của nó lấy từ Contract/Invoice/Payment,
+      giờ đã có đủ nguồn.
 - [ ] Nút **"Tạo tin từ phòng"** (điểm nối Room → RentalListing) — chưa làm: B5 chưa đọc
       `?roomId=` để prefill. Badge "Có tin đang chạy" thì đã có. Làm thành nhánh riêng chạm
       cả hai feature.
@@ -306,6 +341,20 @@ liệu server vừa ghi đè là còn tươi nên không refetch. Hook của wor
 trống ô giá thuê **lặng lẽ** lưu phòng giá 0 đ/tháng — sai số chảy thẳng xuống hóa đơn. Ràng
 buộc "phải khai" thuộc về **form**, không thuộc thực thể; kiểm chuỗi rỗng trước khi parse.
 Cùng một cái bẫy với `electricityPrice: null` (theo giá khu) so với `0` (miễn phí).
+
+**Ô nhập để rỗng khi đã có dữ liệu là lời nói dối im lặng.** Bảng ghi chỉ số ban đầu chỉ đổ
+giá trị người dùng vừa gõ vào ô, nên kỳ đã ghi rồi thì ô trông như chưa nhập — trong khi dòng
+bên dưới vẫn tính "88 kWh × 3.500" và tổng cuối bảng vẫn cộng số đó. Chủ trọ đọc thành "phần
+mềm tự bịa ra một con số". Ô nhập phải đổ **giá trị đang lưu** khi chưa có gì gõ đè.
+
+**Điều kiện `disabled` sai vế thì không có gì báo.** Nút Lưu chỉ số từng kiểm
+`currentReading < 0` — chỉ số công tơ luôn dương nên vế đó **không bao giờ đúng**, nút mở suốt
+dù ô đang báo đỏ. Phải so với chỉ số cũ của chính ô đó. Loại lỗi này typecheck và lint đều
+không thấy; chỉ lộ ra khi bấm thật vào đúng ca sai.
+
+**Ghép class Tailwind bằng nội suy chuỗi (`md:${size}`) không bao giờ sinh ra CSS.** Tailwind
+quét mã nguồn bằng văn bản. Build xanh, typecheck xanh, chỉ có modal là đột nhiên rộng hết màn
+hình. Viết đủ cả hai biến thể vào một `Record`.
 
 **Banner lỗi đặt ở trang nền sẽ nằm SAU lớp phủ modal.** Bấm Lưu bị trùng mã phòng thì dialog
 đứng im không rõ lý do — lỗi có render, chỉ là người dùng không thấy. Lỗi của thao tác trong
